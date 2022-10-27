@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoIncUpdate.Fody", "MongoIncUpdate.Fody\MongoIncUpdate.Fody.csproj", "{CCA5A0E1-522D-42F9-B957-B88CB813477A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyToProcess", "AssemblyToProcess\AssemblyToProcess.csproj", "{CE6507D7-AB12-4220-AB99-B116503F484D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoIncUpdate.Fody.Test", "MongoIncUpdate.Fody.Test\MongoIncUpdate.Fody.Test.csproj", "{8EF9E836-E02F-46B4-9820-35F64666FB5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example", "Example\Example.csproj", "{DA8A294A-27CC-4EEC-88F7-9FE526E8022E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CCA5A0E1-522D-42F9-B957-B88CB813477A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCA5A0E1-522D-42F9-B957-B88CB813477A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCA5A0E1-522D-42F9-B957-B88CB813477A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCA5A0E1-522D-42F9-B957-B88CB813477A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE6507D7-AB12-4220-AB99-B116503F484D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE6507D7-AB12-4220-AB99-B116503F484D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE6507D7-AB12-4220-AB99-B116503F484D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE6507D7-AB12-4220-AB99-B116503F484D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EF9E836-E02F-46B4-9820-35F64666FB5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EF9E836-E02F-46B4-9820-35F64666FB5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EF9E836-E02F-46B4-9820-35F64666FB5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EF9E836-E02F-46B4-9820-35F64666FB5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA8A294A-27CC-4EEC-88F7-9FE526E8022E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA8A294A-27CC-4EEC-88F7-9FE526E8022E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA8A294A-27CC-4EEC-88F7-9FE526E8022E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA8A294A-27CC-4EEC-88F7-9FE526E8022E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
