@@ -10,9 +10,9 @@ public partial class ModuleWeaver
 {
     public TypeReference BitArrayTypeDefReference;
     public MethodReference CompilerGeneratedAttributeTypeReference;
-    
+
     public TypeReference MongoIncUpdateInterface;
-    
+
     public void FindCoreReferences()
     {
         //BitArray
@@ -21,7 +21,7 @@ public partial class ModuleWeaver
 
         CompilerGeneratedAttributeTypeReference = ModuleDefinition.Import(
             typeof(CompilerGeneratedAttribute).GetConstructor(Type.EmptyTypes));
-        
+
         //Mongo
         MongoIncUpdateInterface = _typeSelector.SelectMongoIncUpdateInterface(ModuleDefinition);
     }

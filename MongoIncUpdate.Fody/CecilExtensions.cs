@@ -172,7 +172,8 @@ public static class CecilExtensions
         }
     }
 
-    public static IEnumerable<CustomAttribute> GetAttributes(this IEnumerable<CustomAttribute> attributes, string attributeName)
+    public static IEnumerable<CustomAttribute> GetAttributes(this IEnumerable<CustomAttribute> attributes,
+        string attributeName)
     {
         return attributes.Where(attribute => attribute.Constructor.DeclaringType.FullName == attributeName);
     }
@@ -193,9 +194,9 @@ public static class CecilExtensions
         {
             if (type.HasInterfaces)
             {
-                foreach (var iface in type.Interfaces)
+                foreach (var face in type.Interfaces)
                 {
-                    yield return iface.InterfaceType;
+                    yield return face.InterfaceType;
                 }
             }
 
