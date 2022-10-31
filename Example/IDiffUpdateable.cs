@@ -10,12 +10,10 @@ namespace Example;
 [MongoIncUpdateInterface]
 public interface IDiffUpdateable
 {
-    [BsonIgnore]
-    protected BitArray Dirties { get; set; }
+    [BsonIgnore] protected BitArray Dirties { get; set; }
 
     //todo 考虑实现为对象的静态成员变量
-    [BsonIgnore]
-    protected Dictionary<int, IPropertyCallAdapter> IdxMapping { get; set; }
+    [BsonIgnore] protected Dictionary<int, IPropertyCallAdapter> IdxMapping { get; set; }
 
     [BsonIgnore]
     //todo 考虑实现为对象的静态成员变量
@@ -86,6 +84,8 @@ public interface IDiffUpdateable
             //无脏标记(只需要考虑子对象了,只有引用类型才有子对象)
             if (prop.IsValueType()) continue;
             v = prop.InvokeGet(this);
+            if (v == null) continue; //null类型只能被setter,会触发藏标记前面已经拦截了
+            if (v is string) continue; //string类型是特殊的引用类型,不能修改子类型,只有getter/setter,会触发藏标记前面已经拦截了
             if (v is IDiffUpdateable sv)
             {
                 sv.BuildUpdate(defs, MakeKey(prop.PropName(), key));

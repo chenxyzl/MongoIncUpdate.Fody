@@ -35,6 +35,6 @@ public class Item //: IDiffUpdateable
     public StateMap<int, int> Dic1 { get; set; }
 
     // //测试dictionary的引用类型嵌套
-    // [BsonSerializer(typeof(StateMapSerializer<string, Inner1>))]
-    // public StateMap<string, Inner1> Dic2 { get; set; }
+    [BsonSerializer(typeof(StateMapSerializer<string, Inner1>))]
+    public StateMap<string, Inner1> Dic2 { get; set; }
 }

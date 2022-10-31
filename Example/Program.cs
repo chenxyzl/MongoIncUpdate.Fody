@@ -14,6 +14,7 @@ static class ItemInUpdate
         var setter = Builders<Item>.Update.Combine(defs);
         var filter = Builders<Item>.Filter.Eq("_id", self.Id);
         await collection.UpdateOneAsync(filter, setter, new UpdateOptions { IsUpsert = true });
+        Console.WriteLine($"update data count:{defs.Count}");
     }
 }
 
@@ -95,7 +96,7 @@ public sealed class Program
         //测试删除数据
         item.Dic1.Remove(4);
         // item.Dic2.Remove("6");
-        
+
         //保存数据
         await item.SaveIm(cc);
         //查询数据
