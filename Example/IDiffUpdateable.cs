@@ -64,20 +64,20 @@ public interface IDiffUpdateable
 
             //有脏标记,全量更新(证明被重新赋值了,不用区分值类型和引用类型)
             object? v;
-            if (Dirties.Get(i) && prop.IsDirectType()) //目前只直接写入值和string类型(因为StateMap全量写入有时候有个奇怪的bug)
+            // if (Dirties.Get(i) && prop.IsDirectType()) //目前只直接写入值和string类型(因为StateMap全量写入在多层签到时候有可能会触发个奇怪的bug)
+            if (Dirties.Get(i)) //目前只直接写入值和string类型(因为StateMap全量写入在多层签到时候有可能会触发个奇怪的bug)
             {
                 v = prop.InvokeGet(this);
                 defs.Add(v == null
                     ? update.Unset(MakeKey(prop.PropName(), key))
-                    : update.Set(MakeKey(prop.PropName(), key), v));
-
+                    : update.Set(MakeKey(prop.PropName(), key), v)); //构造更新
+                if (v is IDiffUpdateable df) df.CleanDirties(); //清除脏标记
                 continue;
             }
 
             //无脏标记(只需要考虑子对象了,只有引用类型才有子对象)
             if (prop.IsDirectType()) continue;
             v = prop.InvokeGet(this);
-            if(v is string) continue;//string类型只能被setter,会触发藏标记前面已经拦截了
             if (v == null) continue; //null类型只能被setter,会触发藏标记前面已经拦截了
             if (v is IDiffUpdateable sv)
             {
@@ -104,5 +104,16 @@ public interface IDiffUpdateable
         builder.AppendLiteral(name);
 
         return builder.ToStringAndClear();
+    }
+
+    void CleanDirties() //直接写入时候才调用这个,提高性能
+    {
+        foreach (var (propName, i) in NameMapping)
+        {
+            if (IdxMapping.TryGetValue(i, out var prop)) continue;
+            var v = prop?.InvokeGet(this);
+            if (v is IDiffUpdateable df) df.CleanDirties(); //清除脏标记
+        }
+        Dirties.SetAll(false);
     }
 }

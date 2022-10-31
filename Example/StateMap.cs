@@ -5,6 +5,7 @@ using MongoDB.Driver;
 namespace Example;
 
 [BsonDiscriminator(RootClass = true)]
+[BsonKnownTypes()]
 public class StateMap<K, V> : Dictionary<K, V>, IDiffUpdateable where K : notnull
 {
     private readonly Dictionary<K, bool> _deleteMap = new();
@@ -57,6 +58,14 @@ public class StateMap<K, V> : Dictionary<K, V>, IDiffUpdateable where K : notnul
             {
                 defs.Add(update.Set(IDiffUpdateable.MakeKey($"{k}", key), v));
             }
+        }
+    }
+
+    public void CleanDirties() //直接写入时候才调用这个,提高性能
+    {
+        foreach (var (_, v) in this)
+        {
+            if (v is IDiffUpdateable df) df.CleanDirties(); //清除脏标记
         }
     }
 }
