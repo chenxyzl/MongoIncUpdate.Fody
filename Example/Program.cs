@@ -9,7 +9,7 @@ static class ItemInUpdate
     {
         var diffUpdateable = self as IDiffUpdateable;
         var defs = new List<UpdateDefinition<Item>>();
-        diffUpdateable?.BuildUpdate(defs,"");
+        diffUpdateable?.BuildUpdate(defs, "");
         if (defs.Count == 0) return;
         var setter = Builders<Item>.Update.Combine(defs);
         var filter = Builders<Item>.Filter.Eq("_id", self.Id);
@@ -32,21 +32,75 @@ public sealed class Program
 
 
         //构造查询条件 建议以模型的方式插入数据，这样子字段类型是可控的
-        var item = new Item { Id = 1 };
-        var filter = Builders<Item>.Filter.Eq("_id", item.Id);
+        const int id = 1;
+        var filter = Builders<Item>.Filter.Eq("_id", id);
         //查询老数据
         var beforList = cc.Find(filter).ToList();
-        for (var i = 0; i < beforList.Count; i++) Console.WriteLine($"查询结果 {i}: " + beforList[i].ToJson());
+        for (var i = 0; i < beforList.Count; i++) Console.WriteLine($"查询结果0 {i}: " + beforList[i].ToJson());
 
         //修改数据
         //已经在new时候修改了
-        item.Name = "newName";
+        var item = new Item { Id = id, Name = "newName1" };
+        item.Dic1 = new StateMap<int, int> { { 1, 1 }, { 2, 2 } };
+        item.Dic1.Add(3, 3);
+        item.Dic1.TryAdd(4, 4);
+        //测试初始添加
+        item.Dic2 = new StateMap<int, Inner1>
+        {
+            {
+                5, new Inner1
+                {
+                    Dic1 = new StateMap<int, Inner2>
+                    {
+                        {
+                            5, new Inner2
+                            {
+                                I = 5,
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        //测试后续添加
+        item.Dic2.Add(6, new Inner1 { Dic1 = new StateMap<int, Inner2>() });
+        item.Dic2.TryGetValue(6, out var item1);
+        item1?.Dic1.Add(6, new Inner2 { I = 6 });
+
         //保存数据
         await item.SaveIm(cc);
 
         //查询数据
         var cc1List = cc.Find(filter).ToList();
-        for (var i = 0; i < cc1List.Count; i++) Console.WriteLine($"查询结果 {i}: " + cc1List[i].ToJson());
+        for (var i = 0; i < cc1List.Count; i++) Console.WriteLine($"查询结果1 {i}: " + cc1List[i].ToJson());
+
+        //测试修改值类型
+        if (item.Dic1.TryGetValue(4, out _))
+        {
+            item.Dic1[4] = 44;
+        }
+
+        //测试修改引用类型
+        if (item.Dic2.TryGetValue(6, out var inner1))
+        {
+            inner1.Dic1[6] = new Inner2 { I = 66 };
+        }
+
+        //保存数据
+        await item.SaveIm(cc);
+        //查询数据
+        var cc1List2 = cc.Find(filter).ToList();
+        for (var i = 0; i < cc1List2.Count; i++) Console.WriteLine($"查询结果2 {i}: " + cc1List2[i].ToJson());
+
+        //测试删除数据
+        item.Dic1.Remove(4);
+        item.Dic2.Remove(6);
+        
+        //保存数据
+        await item.SaveIm(cc);
+        //查询数据
+        var cc1List3 = cc.Find(filter).ToList();
+        for (var i = 0; i < cc1List3.Count; i++) Console.WriteLine($"查询结果2 {i}: " + cc1List3[i].ToJson());
     }
 
     private static async Task Main(string[] args)

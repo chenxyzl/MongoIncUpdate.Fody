@@ -4,9 +4,11 @@ namespace Example;
 
 public interface IPropertyCallAdapter
 {
-    object InvokeGet(object @this);
+    object? InvokeGet(object @this);
 
     string PropName();
+
+    bool IsValueType();
     //add void InvokeSet(TThis @this, object value) if necessary
 }
 
@@ -14,22 +16,29 @@ public class PropertyCallAdapter<TThis, TResult> : IPropertyCallAdapter where TT
 {
     private readonly Func<TThis, TResult> _getterInvocation;
     private readonly string _propName;
+    private readonly bool _isValueType;
 
-    public PropertyCallAdapter(Func<TThis, TResult> getterInvocation, string propName)
+    public PropertyCallAdapter(Func<TThis, TResult> getterInvocation, string propName, bool isValueType)
     {
         _getterInvocation = getterInvocation;
         _propName = propName;
+        _isValueType = isValueType;
     }
 
-    public object InvokeGet(object @this)
+    public object? InvokeGet(object @this)
     {
-        return _getterInvocation.Invoke(@this as TThis ?? throw new InvalidOperationException()) ??
-               throw new InvalidOperationException();
+        var target =  @this as TThis ?? throw new InvalidOperationException();
+        return _getterInvocation.Invoke(target);
     }
 
     public string PropName()
     {
         return _propName;
+    }
+
+    public bool IsValueType()
+    {
+        return _isValueType;
     }
 }
 
@@ -46,6 +55,7 @@ public static class PropertyCallAdapterProvider
         Delegate? getterInvocation;
         if ((getMethod = property.GetGetMethod(true)) != null)
         {
+            // property.GetMethod.MakeGenericMethod(property.GetMethod.GetGenericArguments());
             var openGetterType = typeof(Func<,>);
             var concreteGetterType = openGetterType
                 .MakeGenericType(self.GetType(), property.PropertyType);
@@ -60,7 +70,8 @@ public static class PropertyCallAdapterProvider
 
         var openAdapterType = typeof(PropertyCallAdapter<,>);
         var concreteAdapterType = openAdapterType.MakeGenericType(self.GetType(), property.PropertyType);
-        return Activator.CreateInstance(concreteAdapterType, getterInvocation, property.Name) as IPropertyCallAdapter ??
+        return Activator.CreateInstance(concreteAdapterType, getterInvocation, property.Name,
+                   property.PropertyType.IsValueType) as IPropertyCallAdapter ??
                throw new InvalidOperationException();
         // return getterInvocation;
     }

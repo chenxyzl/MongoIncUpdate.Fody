@@ -45,14 +45,14 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
         // _memberVirtualizer.Virtualize(selectedMembers);
         // _callMapper.MapCallsToVirtual(selectedMembers, ModuleDefinition);
-        
+
         // var baseDirtiesMethod = _typeSelector.SelectMethodFromType(MongoIncUpdateInterface, "Dirties");
 
         foreach (var typ in selectedTypes)
         {
             //继承这个接口
             typ.Interfaces.Add(new InterfaceImplementation(MongoIncUpdateInterface));
-            
+
             //插入init函数调用
             //init方法
             var initMethodDef = _typeSelector.SelectMethodFromType(MongoIncUpdateInterface, "Init");
@@ -65,14 +65,14 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     Instruction.Create(OpCodes.Callvirt, initMethodDef),
                     Instruction.Create(OpCodes.Nop));
             }
-            
+
             //脏标记
-            InjectDirtiesProperty(typ);
+            InjectOverrideProperty(typ, "Dirties");
             //IdxMapping
-            InjectIdxMappingProperty(typ);
+            InjectOverrideProperty(typ, "IdxMapping");
             //NameMapping
-            InjectNameMappingProperty(typ);
-            
+            InjectOverrideProperty(typ, "NameMapping");
+
             //注入属性变化监听
             InjectPropSetterPropChangeNotify(typ);
         }
