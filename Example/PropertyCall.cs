@@ -8,7 +8,7 @@ public interface IPropertyCallAdapter
 
     string PropName();
 
-    bool IsValueType();
+    bool IsDirectType();
     //add void InvokeSet(TThis @this, object value) if necessary
 }
 
@@ -16,18 +16,18 @@ public class PropertyCallAdapter<TThis, TResult> : IPropertyCallAdapter where TT
 {
     private readonly Func<TThis, TResult> _getterInvocation;
     private readonly string _propName;
-    private readonly bool _isValueType;
+    private readonly bool _isDirectType;
 
-    public PropertyCallAdapter(Func<TThis, TResult> getterInvocation, string propName, bool isValueType)
+    public PropertyCallAdapter(Func<TThis, TResult> getterInvocation, string propName, bool isDirectType)
     {
         _getterInvocation = getterInvocation;
         _propName = propName;
-        _isValueType = isValueType;
+        _isDirectType = isDirectType;
     }
 
     public object? InvokeGet(object @this)
     {
-        var target =  @this as TThis ?? throw new InvalidOperationException();
+        var target = @this as TThis ?? throw new InvalidOperationException();
         return _getterInvocation.Invoke(target);
     }
 
@@ -36,9 +36,9 @@ public class PropertyCallAdapter<TThis, TResult> : IPropertyCallAdapter where TT
         return _propName;
     }
 
-    public bool IsValueType()
+    public bool IsDirectType()
     {
-        return _isValueType;
+        return _isDirectType;
     }
 }
 
@@ -70,8 +70,11 @@ public static class PropertyCallAdapterProvider
 
         var openAdapterType = typeof(PropertyCallAdapter<,>);
         var concreteAdapterType = openAdapterType.MakeGenericType(self.GetType(), property.PropertyType);
+
+        //注意这里string也当作值类型来处理
         return Activator.CreateInstance(concreteAdapterType, getterInvocation, property.Name,
-                   property.PropertyType.IsValueType) as IPropertyCallAdapter ??
+                       property.PropertyType.IsValueType || property.PropertyType.FullName == "System.String") as
+                   IPropertyCallAdapter ??
                throw new InvalidOperationException();
         // return getterInvocation;
     }

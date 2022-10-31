@@ -42,27 +42,14 @@ public sealed class Program
         //修改数据
         //已经在new时候修改了
         var item = new Item { Id = id, Name = "newName1" };
+        item.Inner1 = new Inner1 { Dic1 = new StateMap<string, Inner2> { { "0", new Inner2 { I = 0 } } } };
         item.Dic1 = new StateMap<int, int> { { 1, 1 }, { 2, 2 } };
         item.Dic1.Add(3, 3);
         item.Dic1.TryAdd(4, 4);
-        // //测试初始添加
-        // item.Dic2 = new StateMap<string, Inner1>
-        // {
-        //     {
-        //         "5", new Inner1
-        //         {
-        //             Dic1 = new StateMap<string, Inner2>
-        //             {
-        //                 {
-        //                     "5", new Inner2
-        //                     {
-        //                         I = 5,
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // };
+        //测试初始添加
+        item.Dic2 = new StateMap<string, Inner1>
+            { { "5", new Inner1 { Dic1 = new StateMap<string, Inner2> { { "5", new Inner2 { I = 5, } } } } } };
+        // item.Dic2 = new StateMap<string, int>{ { "5", 5} };
         // // 测试后续添加
         // item.Dic2.Add("6", new Inner1 { Dic1 = new StateMap<string, Inner2>() });
         // item.Dic2.TryGetValue("6", out var item1);
@@ -76,10 +63,14 @@ public sealed class Program
         for (var i = 0; i < cc1List.Count; i++) Console.WriteLine($"查询结果1 {i}: " + cc1List[i].ToJson());
 
         //测试修改值类型
-        if (item.Dic1.TryGetValue(4, out _))
-        {
-            item.Dic1[4] = 44;
-        }
+        if (item.Dic1.TryGetValue(4, out _)) item.Dic1[4] = 44;
+        item.Name = "newName2";
+        
+        //修改2级数据
+        item.Inner1.Dic1["0"].I = 100;
+        item.Dic1[1] = 11;
+        item.Dic2["5"].Dic1["5"].I = 55;
+        // item.Dic2["5"] = 55;
 
         //测试修改引用类型
         // if (item.Dic2.TryGetValue("6", out var inner1))

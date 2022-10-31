@@ -71,7 +71,7 @@ public interface IDiffUpdateable
 
             //有脏标记,全量更新(证明被重新赋值了,不用区分值类型和引用类型)
             object? v;
-            if (Dirties.Get(i))
+            if (Dirties.Get(i) && prop.IsDirectType())
             {
                 v = prop.InvokeGet(this);
                 defs.Add(v == null
@@ -82,10 +82,9 @@ public interface IDiffUpdateable
             }
 
             //无脏标记(只需要考虑子对象了,只有引用类型才有子对象)
-            if (prop.IsValueType()) continue;
+            if (prop.IsDirectType()) continue;
             v = prop.InvokeGet(this);
             if (v == null) continue; //null类型只能被setter,会触发藏标记前面已经拦截了
-            if (v is string) continue; //string类型是特殊的引用类型,不能修改子类型,只有getter/setter,会触发藏标记前面已经拦截了
             if (v is IDiffUpdateable sv)
             {
                 sv.BuildUpdate(defs, MakeKey(prop.PropName(), key));

@@ -19,7 +19,7 @@ public class Inner1
 }
 
 [MongoIncUpdate]
-public class Item //: IDiffUpdateable
+public class Item
 {
     //id
     [BsonId] public int Id { get; set; }
@@ -37,4 +37,6 @@ public class Item //: IDiffUpdateable
     // //测试dictionary的引用类型嵌套
     [BsonSerializer(typeof(StateMapSerializer<string, Inner1>))]
     public StateMap<string, Inner1> Dic2 { get; set; }
+    // [BsonSerializer(typeof(StateMapSerializer<string, int>))]
+    // public StateMap<string, int> Dic2 { get; set; }
 }
