@@ -41,19 +41,19 @@ public sealed class Program
         //修改数据
         //已经在new时候修改了
         var item = new Item { Id = id, Name = "newName1" };
-        item.Dic1 = new StateMap<int, int> { { 1, 1 }, { 2, 2 } };
-        item.Dic1.Add(3, 3);
-        item.Dic1.TryAdd(4, 4);
+        item.Dic1 = new StateMap<string, int> { { "1", 1 }, { "2", 2 } };
+        item.Dic1.Add("3", 3);
+        item.Dic1.TryAdd("4", 4);
         //测试初始添加
-        item.Dic2 = new StateMap<int, Inner1>
+        item.Dic2 = new StateMap<string, Inner1>
         {
             {
-                5, new Inner1
+                "5", new Inner1
                 {
-                    Dic1 = new StateMap<int, Inner2>
+                    Dic1 = new StateMap<string, Inner2>
                     {
                         {
-                            5, new Inner2
+                            "5", new Inner2
                             {
                                 I = 5,
                             }
@@ -63,9 +63,9 @@ public sealed class Program
             }
         };
         //测试后续添加
-        item.Dic2.Add(6, new Inner1 { Dic1 = new StateMap<int, Inner2>() });
-        item.Dic2.TryGetValue(6, out var item1);
-        item1?.Dic1.Add(6, new Inner2 { I = 6 });
+        item.Dic2.Add("6", new Inner1 { Dic1 = new StateMap<string, Inner2>() });
+        item.Dic2.TryGetValue("6", out var item1);
+        item1?.Dic1.Add("6", new Inner2 { I = 6 });
 
         //保存数据
         await item.SaveIm(cc);
@@ -75,15 +75,15 @@ public sealed class Program
         for (var i = 0; i < cc1List.Count; i++) Console.WriteLine($"查询结果1 {i}: " + cc1List[i].ToJson());
 
         //测试修改值类型
-        if (item.Dic1.TryGetValue(4, out _))
+        if (item.Dic1.TryGetValue("4", out _))
         {
-            item.Dic1[4] = 44;
+            item.Dic1["4"] = 44;
         }
 
         //测试修改引用类型
-        if (item.Dic2.TryGetValue(6, out var inner1))
+        if (item.Dic2.TryGetValue("6", out var inner1))
         {
-            inner1.Dic1[6] = new Inner2 { I = 66 };
+            inner1.Dic1["6"] = new Inner2 { I = 66 };
         }
 
         //保存数据
@@ -93,8 +93,8 @@ public sealed class Program
         for (var i = 0; i < cc1List2.Count; i++) Console.WriteLine($"查询结果2 {i}: " + cc1List2[i].ToJson());
 
         //测试删除数据
-        item.Dic1.Remove(4);
-        item.Dic2.Remove(6);
+        item.Dic1.Remove("4");
+        item.Dic2.Remove("6");
         
         //保存数据
         await item.SaveIm(cc);
