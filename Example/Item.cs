@@ -3,21 +3,6 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Example;
 
-public enum MyEnum
-{
-    A,
-    B
-}
-
-public class TestMyEnum
-{
-    [BsonSerializer(typeof(DictionarySerializer<
-        Dictionary<string, MyEnum>,
-        EnumStringSerializer<MyEnum>,
-        EnumStringSerializer<MyEnum>>))]
-    public Dictionary<MyEnum, MyEnum> FeatureSettings { get; set; }
-}
-
 [MongoIncUpdate]
 public class Inner2
 {
@@ -46,10 +31,10 @@ public class Item //: IDiffUpdateable
     public Inner1 Inner1 { get; set; }
 
     //测试dictionary的值类型
-    [BsonSerializer(typeof(StateMapSerializer<string, int>))]
-    public StateMap<string, int> Dic1 { get; set; }
+    [BsonSerializer(typeof(StateMapSerializer<int, int>))]
+    public StateMap<int, int> Dic1 { get; set; }
 
-    //测试dictionary的引用类型嵌套
-    [BsonSerializer(typeof(StateMapSerializer<string, Inner1>))]
-    public StateMap<string, Inner1> Dic2 { get; set; }
+    // //测试dictionary的引用类型嵌套
+    // [BsonSerializer(typeof(StateMapSerializer<string, Inner1>))]
+    // public StateMap<string, Inner1> Dic2 { get; set; }
 }
