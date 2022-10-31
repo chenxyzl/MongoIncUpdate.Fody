@@ -56,13 +56,6 @@ public interface IDiffUpdateable
         var update = Builders<T>.Update;
         for (int i = 0; i < Dirties.Length; i++)
         {
-            //值类型 脏标记能区分
-            //引用类型
-            //--有脏标记 全量更新
-            //--无脏标记
-            //----实现了IDiffUpdateable接口 递归进入增量更新检查
-            //----没实现IDiffUpdateable接口 全量更新(注意:如果父对象没有实现IDiffUpdateable接口,则会在父对象那里退化为全量覆盖,导致增量更新失效)
-
             //检查是否存在字段映射
             if (!IdxMapping.TryGetValue(i, out var prop))
             {
@@ -71,7 +64,7 @@ public interface IDiffUpdateable
 
             //有脏标记,全量更新(证明被重新赋值了,不用区分值类型和引用类型)
             object? v;
-            if (Dirties.Get(i) && prop.IsDirectType())
+            if (Dirties.Get(i) && prop.IsDirectType()) //目前只直接写入值和string类型(因为StateMap全量写入有时候有个奇怪的bug)
             {
                 v = prop.InvokeGet(this);
                 defs.Add(v == null
@@ -84,6 +77,7 @@ public interface IDiffUpdateable
             //无脏标记(只需要考虑子对象了,只有引用类型才有子对象)
             if (prop.IsDirectType()) continue;
             v = prop.InvokeGet(this);
+            if(v is string) continue;//string类型只能被setter,会触发藏标记前面已经拦截了
             if (v == null) continue; //null类型只能被setter,会触发藏标记前面已经拦截了
             if (v is IDiffUpdateable sv)
             {
