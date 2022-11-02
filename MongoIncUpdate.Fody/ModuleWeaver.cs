@@ -42,6 +42,8 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
         //获取带有MongoIncUpdateAttribute属性的类(也支持继承至某类,后续补充实现)
         var selectedTypes = _typeSelector.Select(ModuleDefinition);
+        
+        _typeSelector.MustAllContainerAndProperty(selectedTypes);
 
         // _memberVirtualizer.Virtualize(selectedMembers);
         // _callMapper.MapCallsToVirtual(selectedMembers, ModuleDefinition);

@@ -4,7 +4,7 @@ using MongoDB.Driver;
 
 namespace Example;
 
-static class ItemInUpdate
+static class ItemInUpdate 
 {
     public static async Task SaveIm(this Item self, IMongoCollection<Item> collection)
     {

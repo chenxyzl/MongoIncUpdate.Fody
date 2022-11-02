@@ -8,11 +8,21 @@ namespace MongoIncUpdate.Fody;
 
 public class TypeSelector
 {
+    public void MustAllContainerAndProperty(IEnumerable<TypeDefinition> types)
+    {
+        foreach (var typ in types)
+        {
+            if (!IsContainer(typ) || HasPublicFiled(typ))
+            {
+                throw new Exception($"{typ.Name} member must only property. [means: no public filed, no method]");
+            }
+        }
+    }
     public IEnumerable<TypeDefinition> Select(ModuleDefinition moduleDefinition)
     {
         var typesToProcess = new List<TypeDefinition>();
         foreach (var type in moduleDefinition.GetTypes())
-            if (CanVirtualize(type) && HasMongoIncUpdateAttribute(type) && IsContainer(type))
+            if (CanVirtualize(type) && HasMongoIncUpdateAttribute(type))
             {
                 typesToProcess.Add(type);
             }
@@ -105,9 +115,14 @@ public class TypeSelector
         return !type.IsSealed;
     }
 
-    private static bool IsContainer(TypeDefinition type)
+    public static bool IsContainer(TypeDefinition type)
     {
         return type.Methods.All(_ => _.IsGetter || _.IsSetter || _.IsConstructor);
+    }
+    
+    public static bool HasPublicFiled(TypeDefinition type)
+    {
+        return type.Fields.Any(t=>t.IsPublic);
     }
 
     private static bool ImplementsInterfaces(TypeDefinition type)

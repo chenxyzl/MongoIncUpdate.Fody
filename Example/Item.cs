@@ -8,19 +8,18 @@ namespace Example;
 [MongoIncUpdate]
 public class Inner2
 {
-    //多层嵌套 任意测试了  
+    //多层嵌套 任意测试了   
     public int I { get; set; }
-    [BsonIgnore]
-    public int XX { get; set; }
+    [BsonIgnore] public int XX { get; set; } 
 }
 
 [MongoIncUpdate]
 public class Inner1
 {
-    //测试嵌套的dictionary的引用类型嵌套
+    //测试嵌套的dictionary的引用类型嵌套 
     [BsonSerializer(typeof(StateMapSerializer<string, Inner2>))]
     public StateMap<string, Inner2> Dic1 { get; set; } = new();
-    
+
     public Inner2 Inner2 { get; set; } = new();
 }
 
@@ -32,9 +31,11 @@ public class Item
 
     //string类型带attr
     [BsonElement("RealName")] public string Name { get; set; }
+
     //
     //测试引用类型
     public Inner1 Inner1 { get; set; } = new();
+
     //
     // //测试dictionary的值类型
     [BsonSerializer(typeof(StateMapSerializer<int, int>))]
