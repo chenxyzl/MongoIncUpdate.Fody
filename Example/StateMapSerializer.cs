@@ -34,8 +34,7 @@ internal class TestDoc
     [BsonId] public string Id { get; set; }
 }
 */
-public class StateMapSerializer<TKey, TValue> : SerializerBase<StateMap<TKey, TValue>>, IBsonArraySerializer,
-    IBsonDocumentSerializer
+public class StateMapSerializer<TKey, TValue> : SerializerBase<StateMap<TKey, TValue>>, IBsonDocumentSerializer
     where TKey : notnull
 {
     public override StateMap<TKey, TValue> Deserialize(BsonDeserializationContext context,
@@ -69,20 +68,12 @@ public class StateMapSerializer<TKey, TValue> : SerializerBase<StateMap<TKey, TV
         return ret;
     }
 
-    public bool TryGetItemSerializationInfo(out BsonSerializationInfo serializationInfo)
-    {
-        serializationInfo = new BsonSerializationInfo(null,
-            BsonSerializer.SerializerRegistry.GetSerializer<TValue>(),
-            BsonSerializer.SerializerRegistry.GetSerializer<TValue>().ValueType);
-        return true;
-    }
-    
     public bool TryGetMemberSerializationInfo(string memberName, out BsonSerializationInfo serializationInfo)
     {
         if (memberName.StartsWith("k_"))
         {
             //k
-            serializationInfo = new BsonSerializationInfo(memberName,// this, GetType());
+            serializationInfo = new BsonSerializationInfo(memberName, // this, GetType());
                 BsonSerializer.SerializerRegistry.GetSerializer<TValue>(),
                 BsonSerializer.SerializerRegistry.GetSerializer<TValue>().ValueType);
             // serializationInfo = new BsonSerializationInfo(memberName.Substring(2), this, GetType());
@@ -92,9 +83,9 @@ public class StateMapSerializer<TKey, TValue> : SerializerBase<StateMap<TKey, TV
         else
         {
             //v
-            serializationInfo = new BsonSerializationInfo(memberName,// this, GetType());
-            BsonSerializer.SerializerRegistry.GetSerializer<TValue>(),
-            BsonSerializer.SerializerRegistry.GetSerializer<TValue>().ValueType);
+            serializationInfo = new BsonSerializationInfo(memberName, // this, GetType());
+                BsonSerializer.SerializerRegistry.GetSerializer<TValue>(),
+                BsonSerializer.SerializerRegistry.GetSerializer<TValue>().ValueType);
         }
 
         return true;
