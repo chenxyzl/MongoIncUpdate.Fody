@@ -4,8 +4,8 @@ using MongoDB.Driver;
 
 namespace Example;
 
-[BsonDiscriminator(RootClass = true)]
-[BsonKnownTypes()]
+[BsonDiscriminator(RootClass = false)]
+[BsonKnownTypes(typeof(Item), typeof(Inner1), typeof(Inner2))]
 public class StateMap<K, V> : Dictionary<K, V>, IDiffUpdateable where K : notnull
 {
     private readonly Dictionary<K, bool> _deleteMap = new();
@@ -18,6 +18,16 @@ public class StateMap<K, V> : Dictionary<K, V>, IDiffUpdateable where K : notnul
     Dictionary<string, int> IDiffUpdateable.NameMapping { get; set; } = new();
 
     #endregion
+
+    public V? this[K key]
+    {
+        get => base[key];
+        set
+        {
+            _deleteMap.Remove(key);
+            base[key] = value;
+        }
+    }
 
     public new bool Remove(K key)
     {
@@ -44,7 +54,8 @@ public class StateMap<K, V> : Dictionary<K, V>, IDiffUpdateable where K : notnul
         //先删除
         foreach (var (k, v) in _deleteMap)
         {
-            defs.Add(update.Unset(IDiffUpdateable.MakeKey($"{k}", key)));
+            defs.Add(update.Unset(IDiffUpdateable.MakeKey($"k_{k}", key)));
+            // defs.Add(update.Set(IDiffUpdateable.MakeKey($"k_{k}", key), default(V)));
         }
 
         //后修改
@@ -52,11 +63,11 @@ public class StateMap<K, V> : Dictionary<K, V>, IDiffUpdateable where K : notnul
         {
             if (v is IDiffUpdateable v1)
             {
-                v1.BuildUpdate(defs, IDiffUpdateable.MakeKey($"{k}", key));
+                v1.BuildUpdate(defs, IDiffUpdateable.MakeKey($"k_{k}", key));
             }
             else
             {
-                defs.Add(update.Set(IDiffUpdateable.MakeKey($"{k}", key), v));
+                defs.Add(update.Set(IDiffUpdateable.MakeKey($"k_{k}", key), v));
             }
         }
     }

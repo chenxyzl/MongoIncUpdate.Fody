@@ -34,7 +34,9 @@ internal class TestDoc
     [BsonId] public string Id { get; set; }
 }
 */
-public class StateMapSerializer<TKey, TValue> : SerializerBase<StateMap<TKey, TValue>> where TKey : notnull
+public class StateMapSerializer<TKey, TValue> : SerializerBase<StateMap<TKey, TValue>>, IBsonArraySerializer,
+    IBsonDocumentSerializer
+    where TKey : notnull
 {
     public override StateMap<TKey, TValue> Deserialize(BsonDeserializationContext context,
         BsonDeserializationArgs args)
@@ -46,6 +48,7 @@ public class StateMapSerializer<TKey, TValue> : SerializerBase<StateMap<TKey, TV
         while (bsonReader.ReadBsonType() != BsonType.EndOfDocument)
         {
             var a = bsonReader.ReadName();
+            a = a.Substring(2);
             TKey key;
 
             if (typeof(TKey).IsEnum)
@@ -66,6 +69,37 @@ public class StateMapSerializer<TKey, TValue> : SerializerBase<StateMap<TKey, TV
         return ret;
     }
 
+    public bool TryGetItemSerializationInfo(out BsonSerializationInfo serializationInfo)
+    {
+        serializationInfo = new BsonSerializationInfo(null,
+            BsonSerializer.SerializerRegistry.GetSerializer<TValue>(),
+            BsonSerializer.SerializerRegistry.GetSerializer<TValue>().ValueType);
+        return true;
+    }
+    
+    public bool TryGetMemberSerializationInfo(string memberName, out BsonSerializationInfo serializationInfo)
+    {
+        if (memberName.StartsWith("k_"))
+        {
+            //k
+            serializationInfo = new BsonSerializationInfo(memberName,// this, GetType());
+                BsonSerializer.SerializerRegistry.GetSerializer<TValue>(),
+                BsonSerializer.SerializerRegistry.GetSerializer<TValue>().ValueType);
+            // serializationInfo = new BsonSerializationInfo(memberName.Substring(2), this, GetType());
+            // // BsonSerializer.SerializerRegistry.GetSerializer<TKey>(),
+            // // BsonSerializer.SerializerRegistry.GetSerializer<TKey>().ValueType);
+        }
+        else
+        {
+            //v
+            serializationInfo = new BsonSerializationInfo(memberName,// this, GetType());
+            BsonSerializer.SerializerRegistry.GetSerializer<TValue>(),
+            BsonSerializer.SerializerRegistry.GetSerializer<TValue>().ValueType);
+        }
+
+        return true;
+    }
+
     public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args,
         StateMap<TKey, TValue>? value)
     {
@@ -75,7 +109,8 @@ public class StateMapSerializer<TKey, TValue> : SerializerBase<StateMap<TKey, TV
         {
             foreach (var v in value)
             {
-                bsonWriter.WriteName(v.Key.ToString());
+                var k = v.Key.ToString();
+                bsonWriter.WriteName($"k_{k}");
                 BsonSerializer.SerializerRegistry.GetSerializer<TValue>().Serialize(context, v.Value);
             }
         }
