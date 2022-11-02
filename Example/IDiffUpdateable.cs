@@ -64,8 +64,7 @@ public interface IDiffUpdateable
 
             //有脏标记,全量更新(证明被重新赋值了,不用区分值类型和引用类型)
             object? v;
-            // if (Dirties.Get(i) && prop.IsDirectType()) //目前只直接写入值和string类型(因为StateMap全量写入在多层签到时候有可能会触发个奇怪的bug)
-            if (Dirties.Get(i)) //目前只直接写入值和string类型(因为StateMap全量写入在多层签到时候有可能会触发个奇怪的bug)
+            if (Dirties.Get(i))
             {
                 v = prop.InvokeGet(this);
                 defs.Add(v == null
