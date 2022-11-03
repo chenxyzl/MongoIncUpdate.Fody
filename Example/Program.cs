@@ -4,21 +4,6 @@ using MongoDB.Driver;
 
 namespace Example;
 
-static class ItemInUpdate 
-{
-    public static async Task SaveIm(this Item self, IMongoCollection<Item> collection)
-    {
-        var diffUpdateable = self as IDiffUpdateable;
-        var defs = new List<UpdateDefinition<Item>>();
-        diffUpdateable?.BuildUpdate(defs, "");
-        if (defs.Count == 0) return;
-        var setter = Builders<Item>.Update.Combine(defs);
-        var filter = Builders<Item>.Filter.Eq("_id", self.Id);
-        await collection.UpdateOneAsync(filter, setter, new UpdateOptions { IsUpsert = true });
-        Console.WriteLine($"update data count:{defs.Count}");
-    }
-}
-
 public sealed class Program
 {
     public async Task Run()
@@ -57,8 +42,9 @@ public sealed class Program
         item.Dic2.Add("6", new Inner1 { Dic1 = new StateMap<string, Inner2>() });
         item.Dic2.TryGetValue("6", out var item1);
         //保存数据
-        await item.SaveIm(cc);
+        await cc.IncUpdate(item);
         Console.WriteLine();
+        
         // 查询数据
         var cc1List = cc.Find(filter).ToList();
         for (var i = 0; i < cc1List.Count; i++) Console.WriteLine($"查询结果1 {i}: " + cc1List[i].ToJson());
@@ -83,7 +69,7 @@ public sealed class Program
 
         //测试修改引用类型
         //保存数据
-        await item.SaveIm(cc);
+        await cc.IncUpdate(item);
         Console.WriteLine();
 
         // //查询数据
@@ -96,7 +82,7 @@ public sealed class Program
         item.Dic1[4]="new_4";
 
         //保存数据
-        await item.SaveIm(cc);
+        await cc.IncUpdate(item);
         Console.WriteLine();
 
         //查询数据
