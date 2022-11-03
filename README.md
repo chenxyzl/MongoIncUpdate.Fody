@@ -32,7 +32,7 @@
 5. 调用await collection.UpdateOneAsync(filter, setter, new UpdateOptions { IsUpsert = true });来保存
 
 ## 如何使用
-### 1.存储实体构造
+### 1.存储实体构造(需要保证成员都是属性,即为get;set----这里增加了编译期检查如果不需要这个现在就自行去掉)
 ``` C#
 [MongoIncUpdate]
 public class Inner2
