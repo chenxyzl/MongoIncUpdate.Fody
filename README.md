@@ -3,7 +3,8 @@
 1. 给所有属性在编译器静态注入脏标记
 2. mongo存储时候检查藏标记来生成UpdateDefinition,并执行UpdateOneAsync保存
 
-## 实现增量更新的脏标记注入
+## 实现原理(如不关系直接看底部如何使用)
+### 实现增量更新的脏标记注入
 1. 引用Fody包,增加FodyWeavers.xml,配置导入MongoIncUpdate(MongoIncUpdate工程为Fody的静态代码编织插件,增量方案的代码注入在这里实现)
 2. MongoIncUpdate工程的增加类ModuleWeaver(继承BaseModuleWeaver),会被fody调用(原理就是msbuild会在编译以前扫描引入的包的.targets文件,并执行其中的task,详情看《07_.net fody.md》)
     1. ModuleWeave实现扫描标记为MongoIncUpdateAttribute为等待被注入的对象
@@ -16,7 +17,7 @@
     8. 扫描对象的所有ctor方法,注入调用MongoIncUpdateInterfaceAttribute标记的插件类的实例方法Init
 3. 实现StateMap和StateMapSerializer增加对Dictionary的支持
 
-## Mongo增量的存储过程
+### Mongo增量的存储过程
 1. 存储对象调用MongoIncUpdateInterfaceAttribute注入的接口的BuildUpdate来生成UpdateDefinition
 2. BuildUpdate中for循环遍历脏标记,更具标记的位置来获取对象的值和类型相关属性
 3. 如果是脏则整体存储,如果不是脏则检查是否是引用类型(string特殊引用类型除外),如果类型没有被注入插件接口则退化为整体存储(保底措施),有递归调用BuildUpdate
@@ -32,7 +33,7 @@
 5. 调用await collection.UpdateOneAsync(filter, setter, new UpdateOptions { IsUpsert = true });来保存
 
 ## 如何使用
-### 1.存储实体构造(需要保证成员都是属性,即为get;set----这里增加了编译期检查如果不需要这个现在就自行去掉)
+### 1.存储实体构造
 ``` C#
 [MongoIncUpdate]
 public class Inner2
