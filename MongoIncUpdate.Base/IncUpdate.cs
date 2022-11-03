@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 
-namespace Example;
+namespace MongoIncUpdate.Base;
 
 public static class IncUpdateExt
 {
@@ -25,7 +25,7 @@ public static class IncUpdateExt
     public static async Task IncUpdate<T>(this IMongoCollection<T> collection, T item) where T : class
     {
         //获取bsonId。这种方式性能较低,但比较通用。
-        var id = item.GetBsonId();
+        var id = GetBsonId(item);
         if (id == null) throw new Exception("BsonId not exist");
 
         var diffUpdateable = item as IDiffUpdateable;

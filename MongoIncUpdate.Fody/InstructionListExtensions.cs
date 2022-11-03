@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil.Cil;
 using Mono.Collections.Generic;
 
 namespace MongoIncUpdate.Fody;
@@ -17,18 +16,12 @@ public static class InstructionListExtensions
 
     public static void Append(this Collection<Instruction> collection, params Instruction[] instructions)
     {
-        foreach (var instruction in instructions)
-        {
-            collection.Add(instruction);
-        }
+        foreach (var instruction in instructions) collection.Add(instruction);
     }
 
     public static int Insert(this Collection<Instruction> collection, int index, params Instruction[] instructions)
     {
-        foreach (var instruction in instructions.Reverse())
-        {
-            collection.Insert(index, instruction);
-        }
+        foreach (var instruction in instructions.Reverse()) collection.Insert(index, instruction);
         return index + instructions.Length;
     }
 }

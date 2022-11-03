@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using Mono.Cecil.Rocks;
 
 namespace MongoIncUpdate.Fody;
@@ -11,42 +8,18 @@ public class TypeSelector
     public void MustAllContainerAndProperty(IEnumerable<TypeDefinition> types)
     {
         foreach (var typ in types)
-        {
             if (!IsContainer(typ) || HasPublicFiled(typ))
-            {
                 throw new Exception($"{typ.Name} member must only property. [means: no public filed, no method]");
-            }
-        }
     }
+
     public IEnumerable<TypeDefinition> Select(ModuleDefinition moduleDefinition)
     {
         var typesToProcess = new List<TypeDefinition>();
         foreach (var type in moduleDefinition.GetTypes())
             if (CanVirtualize(type) && HasMongoIncUpdateAttribute(type))
-            {
                 typesToProcess.Add(type);
-            }
 
         return typesToProcess;
-    }
-
-    public TypeReference SelectMongoIncUpdateInterface(ModuleDefinition moduleDefinition)
-    {
-        var typesToProcess = new List<TypeReference>();
-        foreach (var type in moduleDefinition.GetTypes())
-            if (HasMongoIncUpdateInterfaceAttribute(type) && type.IsInterface)
-                typesToProcess.Add(type);
-        if (typesToProcess.Count < 1)
-        {
-            throw new Exception("MongoIncUpdateInterfaceAttribute must exist");
-        }
-
-        if (typesToProcess.Count > 1)
-        {
-            throw new Exception($"MongoIncUpdateInterfaceAttribute must only one; now:{typesToProcess.Count}");
-        }
-
-        return typesToProcess[0];
     }
 
     public MethodDefinition SelectMethodFromType(TypeReference typeReference, string methodName)
@@ -56,18 +29,15 @@ public class TypeSelector
             if (type.Name == methodName)
                 methodsToProcess.Add(type);
         if (methodsToProcess.Count < 1)
-        {
             throw new Exception($"SelectMethodFromType ${typeReference.Name}:{methodName} must exist");
-        }
 
         if (methodsToProcess.Count > 1)
-        {
             throw new Exception(
                 $"SelectMethodFromType ${typeReference.Name}:{methodName} must only one; now:{methodsToProcess.Count}");
-        }
 
         return methodsToProcess[0];
     }
+
     public PropertyDefinition SelectPropFromType(TypeReference typeReference, string propName)
     {
         var propToProcess = new List<PropertyDefinition>();
@@ -75,18 +45,15 @@ public class TypeSelector
             if (type.Name == propName)
                 propToProcess.Add(type);
         if (propToProcess.Count < 1)
-        {
             throw new Exception($"SelectMethodFromType ${typeReference.Name}:{propName} must exist");
-        }
 
         if (propToProcess.Count > 1)
-        {
             throw new Exception(
                 $"SelectMethodFromType ${typeReference.Name}:{propName} must only one; now:{propToProcess.Count}");
-        }
 
         return propToProcess[0];
     }
+
     private static bool CanVirtualize(TypeDefinition type)
     {
         return IsPublicClass(type)
@@ -119,10 +86,10 @@ public class TypeSelector
     {
         return type.Methods.All(_ => _.IsGetter || _.IsSetter || _.IsConstructor);
     }
-    
+
     public static bool HasPublicFiled(TypeDefinition type)
     {
-        return type.Fields.Any(t=>t.IsPublic);
+        return type.Fields.Any(t => t.IsPublic);
     }
 
     private static bool ImplementsInterfaces(TypeDefinition type)

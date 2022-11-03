@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using AssemblyToProcess;
+﻿using System.Diagnostics;
 using Fody;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -11,28 +7,18 @@ namespace MongoIncUpdate.Fody;
 
 public partial class ModuleWeaver : BaseModuleWeaver
 {
-    private readonly CallMapper _callMapper;
-
-    private readonly MemberSelector _memberSelector;
-    private readonly MemberVirtualizer _memberVirtualizer;
     private readonly TypeSelector _typeSelector;
 
     public ModuleWeaver()
-        : this(new TypeSelector(), new MemberSelector(), new MemberVirtualizer(), new CallMapper())
+        : this(new TypeSelector())
     {
-        // Debugger.Launch();
+        Debugger.Launch(); 
     }
 
     public ModuleWeaver(
-        TypeSelector typeSelector,
-        MemberSelector memberSelector,
-        MemberVirtualizer memberVirtualizer,
-        CallMapper callMapper)
+        TypeSelector typeSelector)
     {
         _typeSelector = typeSelector;
-        _memberSelector = memberSelector;
-        _memberVirtualizer = memberVirtualizer;
-        _callMapper = callMapper;
     }
 
     public override void Execute()
@@ -43,21 +29,17 @@ public partial class ModuleWeaver : BaseModuleWeaver
         //获取带有MongoIncUpdateAttribute属性的类(也支持继承至某类,后续补充实现)
         var selectedTypes = _typeSelector.Select(ModuleDefinition);
         
+
         _typeSelector.MustAllContainerAndProperty(selectedTypes);
-
-        // _memberVirtualizer.Virtualize(selectedMembers);
-        // _callMapper.MapCallsToVirtual(selectedMembers, ModuleDefinition);
-
-        // var baseDirtiesMethod = _typeSelector.SelectMethodFromType(MongoIncUpdateInterface, "Dirties");
 
         foreach (var typ in selectedTypes)
         {
             //继承这个接口
-            typ.Interfaces.Add(new InterfaceImplementation(MongoIncUpdateInterface));
+            typ.Interfaces.Add(new InterfaceImplementation(_mongoIncUpdateInterface));
 
             //插入init函数调用
             //init方法
-            var initMethodDef = _typeSelector.SelectMethodFromType(MongoIncUpdateInterface, "Init");
+            var initMethodDef = _typeSelector.SelectMethodFromType(_mongoIncUpdateInterface, "Init");
             var ctors = typ.Methods.Where(m => m.IsConstructor).ToList();
             foreach (var ctor in ctors)
             {
@@ -88,6 +70,6 @@ public partial class ModuleWeaver : BaseModuleWeaver
     {
         yield return "mscorlib";
         yield return "System";
-        yield return "MongoDB";
+        yield return "System.Collections";
     }
 }

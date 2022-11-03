@@ -1,28 +1,28 @@
-﻿using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Mono.Cecil;
-using Mono.Cecil.Rocks;
+
 
 namespace MongoIncUpdate.Fody;
 
 public partial class ModuleWeaver
 {
-    public TypeReference BitArrayTypeDefReference;
-    public MethodReference CompilerGeneratedAttributeTypeReference;
-
-    public TypeReference MongoIncUpdateInterface;
+    private TypeReference _mongoIncUpdateInterface;
 
     public void FindCoreReferences()
     {
         //BitArray
         var bitArrayTypeDefinition = FindTypeDefinition("System.Collections.BitArray");
-        BitArrayTypeDefReference = ModuleDefinition.ImportReference(bitArrayTypeDefinition);
+        ModuleDefinition.Assembly.MainModule.ImportReference(bitArrayTypeDefinition.Resolve());
 
-        CompilerGeneratedAttributeTypeReference = ModuleDefinition.Import(
-            typeof(CompilerGeneratedAttribute).GetConstructor(Type.EmptyTypes));
+        var mongoIncUpdate = ModuleDefinition.FindAssembly("MongoIncUpdate.Base") ??
+                             throw new ArgumentNullException($"\"MongoIncUpdate.Base\" must not null");
+        _mongoIncUpdateInterface =
+            ModuleDefinition.FindType("MongoIncUpdate.Base", "IDiffUpdateable", mongoIncUpdate) ??
+            throw new ArgumentNullException($"\"MongoIncUpdate.Base.IDiffUpdateable\" must not null");
 
-        //Mongo
-        MongoIncUpdateInterface = _typeSelector.SelectMongoIncUpdateInterface(ModuleDefinition);
+        //
+        // // mongoIncUpdate.
+        // MongoIncUpdateInterface = ModuleDefinition.FindType("MongoIncUpdate.Base", "IDiffUpdateable", mongoIncUpdate);
+        // MongoIncUpdateInterface.Resolve();
     }
 }

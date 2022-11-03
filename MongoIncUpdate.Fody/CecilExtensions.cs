@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 
@@ -20,25 +18,13 @@ public static class CecilExtensions
 
     public static bool IsCallToMethod(this Instruction instruction, MethodDefinition method)
     {
-        if (!instruction.OpCode.IsCall())
-        {
-            return false;
-        }
+        if (!instruction.OpCode.IsCall()) return false;
 
-        if (!(instruction.Operand is MethodReference methodReference))
-        {
-            return false;
-        }
+        if (!(instruction.Operand is MethodReference methodReference)) return false;
 
-        if (methodReference.Name != method.Name)
-        {
-            return false;
-        }
+        if (methodReference.Name != method.Name) return false;
 
-        if (methodReference.Resolve() != method)
-        {
-            return false;
-        }
+        if (methodReference.Resolve() != method) return false;
 
         return true;
     }
@@ -46,26 +32,15 @@ public static class CecilExtensions
     public static bool IsCallToMethod(this Instruction instruction, string methodName, out int propertyNameIndex)
     {
         propertyNameIndex = 1;
-        if (!instruction.OpCode.IsCall())
-        {
-            return false;
-        }
+        if (!instruction.OpCode.IsCall()) return false;
 
-        if (!(instruction.Operand is MethodReference methodReference))
-        {
-            return false;
-        }
+        if (!(instruction.Operand is MethodReference methodReference)) return false;
 
-        if (methodReference.Name != methodName)
-        {
-            return false;
-        }
+        if (methodReference.Name != methodName) return false;
 
         var parameterDefinition = methodReference.Parameters.FirstOrDefault(x => x.Name == "propertyName");
         if (parameterDefinition != null)
-        {
             propertyNameIndex = methodReference.Parameters.Count - parameterDefinition.Index;
-        }
 
         return true;
     }
@@ -78,54 +53,35 @@ public static class CecilExtensions
 
     public static TypeReference GetGeneric(this TypeReference reference)
     {
-        if (!reference.HasGenericParameters)
-        {
-            return reference;
-        }
+        if (!reference.HasGenericParameters) return reference;
 
         var genericType = new GenericInstanceType(reference);
-        foreach (var parameter in reference.GenericParameters)
-        {
-            genericType.GenericArguments.Add(parameter);
-        }
+        foreach (var parameter in reference.GenericParameters) genericType.GenericArguments.Add(parameter);
 
         return genericType;
     }
 
     public static FieldReference GetGeneric(this FieldDefinition definition)
     {
-        if (!definition.DeclaringType.HasGenericParameters)
-        {
-            return definition;
-        }
+        if (!definition.DeclaringType.HasGenericParameters) return definition;
 
         var declaringType = new GenericInstanceType(definition.DeclaringType);
         foreach (var parameter in definition.DeclaringType.GenericParameters)
-        {
             declaringType.GenericArguments.Add(parameter);
-        }
 
         return new FieldReference(definition.Name, definition.FieldType, declaringType);
     }
 
     public static MethodReference GetGeneric(this MethodReference reference)
     {
-        if (!reference.DeclaringType.HasGenericParameters)
-        {
-            return reference;
-        }
+        if (!reference.DeclaringType.HasGenericParameters) return reference;
 
         var declaringType = new GenericInstanceType(reference.DeclaringType);
         foreach (var parameter in reference.DeclaringType.GenericParameters)
-        {
             declaringType.GenericArguments.Add(parameter);
-        }
 
         var methodReference = new MethodReference(reference.Name, reference.MethodReturnType.ReturnType, declaringType);
-        foreach (var parameterDefinition in reference.Parameters)
-        {
-            methodReference.Parameters.Add(parameterDefinition);
-        }
+        foreach (var parameterDefinition in reference.Parameters) methodReference.Parameters.Add(parameterDefinition);
 
         methodReference.HasThis = reference.HasThis;
         return methodReference;
@@ -138,38 +94,25 @@ public static class CecilExtensions
             HasThis = self.HasThis,
             ExplicitThis = self.ExplicitThis,
             DeclaringType = self.DeclaringType.MakeGenericInstanceType(arguments),
-            CallingConvention = self.CallingConvention,
+            CallingConvention = self.CallingConvention
         };
 
         foreach (var parameter in self.Parameters)
-        {
             reference.Parameters.Add(new ParameterDefinition(parameter.ParameterType));
-        }
 
         foreach (var genericParameter in self.GenericParameters)
-        {
             reference.GenericParameters.Add(new GenericParameter(genericParameter.Name, reference));
-        }
 
         return reference;
     }
 
     public static IEnumerable<CustomAttribute> GetAllCustomAttributes(this TypeDefinition typeDefinition)
     {
-        foreach (var attribute in typeDefinition.CustomAttributes)
-        {
-            yield return attribute;
-        }
+        foreach (var attribute in typeDefinition.CustomAttributes) yield return attribute;
 
-        if (!(typeDefinition.BaseType is TypeDefinition baseDefinition))
-        {
-            yield break;
-        }
+        if (!(typeDefinition.BaseType is TypeDefinition baseDefinition)) yield break;
 
-        foreach (var attribute in baseDefinition.GetAllCustomAttributes())
-        {
-            yield return attribute;
-        }
+        foreach (var attribute in baseDefinition.GetAllCustomAttributes()) yield return attribute;
     }
 
     public static IEnumerable<CustomAttribute> GetAttributes(this IEnumerable<CustomAttribute> attributes,
@@ -178,7 +121,7 @@ public static class CecilExtensions
         return attributes.Where(attribute => attribute.Constructor.DeclaringType.FullName == attributeName);
     }
 
-    public static CustomAttribute GetAttribute(this IEnumerable<CustomAttribute> attributes, string attributeName)
+    public static CustomAttribute? GetAttribute(this IEnumerable<CustomAttribute> attributes, string attributeName)
     {
         return attributes.FirstOrDefault(attribute => attribute.Constructor.DeclaringType.FullName == attributeName);
     }
@@ -188,17 +131,13 @@ public static class CecilExtensions
         return attributes.Any(attribute => attribute.Constructor.DeclaringType.FullName == attributeName);
     }
 
-    public static IEnumerable<TypeReference> GetAllInterfaces(this TypeDefinition type)
+    public static IEnumerable<TypeReference> GetAllInterfaces(this TypeDefinition? type)
     {
         while (type != null)
         {
             if (type.HasInterfaces)
-            {
                 foreach (var face in type.Interfaces)
-                {
                     yield return face.InterfaceType;
-                }
-            }
 
             type = type.BaseType?.Resolve();
         }
@@ -215,22 +154,23 @@ public static class CecilExtensions
     {
         yield return method;
 
-        while (method.GetBaseMethod(out method))
-        {
-            yield return method;
-        }
+        while (method.GetBaseMethod(out method)) yield return method;
     }
 
-    public static OpCode GetCallOpCode(this TypeReference type)
-        => type.IsValueType ? OpCodes.Call : OpCodes.Callvirt;
-
-    public static void AddConditionalBoxInstructions(this ICollection<Instruction> instructions, TypeReference type)
+    public static AssemblyNameReference? FindAssembly(this ModuleDefinition module, string name)
     {
-        if (type.IsValueType)
+        return module.AssemblyReferences.Where(x => x.Name == name).MaxBy(x => x.Version);
+    }
+
+    public static TypeReference FindType(this ModuleDefinition currentModule, string @namespace, string typeName,
+        IMetadataScope? scope = null, params string[] typeParameters)
+    {
+        var result = new TypeReference(@namespace, typeName, currentModule, scope);
+        foreach (var typeParameter in typeParameters)
         {
-            var genericType = type.GetGeneric();
-            instructions.Add(Instruction.Create(OpCodes.Ldobj, genericType));
-            instructions.Add(Instruction.Create(OpCodes.Box, genericType));
+            result.GenericParameters.Add(new GenericParameter(typeParameter, result));
         }
+
+        return currentModule.ImportReference(result);
     }
 }

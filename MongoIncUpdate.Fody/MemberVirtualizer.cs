@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 
 namespace MongoIncUpdate.Fody;
 

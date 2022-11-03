@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil;
 
 namespace MongoIncUpdate.Fody;
 
@@ -18,6 +16,4 @@ public class MemberSelector
 
         return membersToProcess;
     }
-    
-   
 }

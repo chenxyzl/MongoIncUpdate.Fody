@@ -1,16 +1,15 @@
-﻿using AssemblyToProcess;
+﻿using System.Collections;
 using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson.Serialization.Options;
-using MongoDB.Bson.Serialization.Serializers;
+using MongoIncUpdate.Base;
 
 namespace Example;
 
 [MongoIncUpdate]
 public class Inner2
 {
-    //多层嵌套 任意测试了   
+    //多层嵌套  任意测试了         
     public int I { get; set; }
-    [BsonIgnore] public int XX { get; set; } 
+    [BsonIgnore] public int XX { get; set; }
 }
 
 [MongoIncUpdate]
@@ -30,7 +29,7 @@ public class Item
     [BsonId] public int Id { get; set; }
 
     //string类型带attr
-    [BsonElement("RealName")] public string Name { get; set; }
+    [BsonElement("RealName")] public string Name { get; set; } = "";
 
     //
     //测试引用类型
