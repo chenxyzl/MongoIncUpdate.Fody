@@ -38,8 +38,8 @@ public class Item
 
     //
     // //测试dictionary的值类型
-    [BsonSerializer(typeof(StateMapSerializer<int, int>))]
-    public StateMap<int, int> Dic1 { get; set; } = new();
+    [BsonSerializer(typeof(StateMapSerializer<int, string>))]
+    public StateMap<int, string> Dic1 { get; set; } = new();
 
     //测试dictionary的引用类型嵌套
     [BsonSerializer(typeof(StateMapSerializer<string, Inner1>))]

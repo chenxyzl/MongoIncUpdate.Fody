@@ -46,9 +46,9 @@ public sealed class Program
             Dic1 = new StateMap<string, Inner2> { { "-1", new Inner2 { I = -1, XX = 123 } } },
             Inner2 = new Inner2 { I = 123 }
         };
-        item.Dic1 = new StateMap<int, int> { { 1, 1 }, { 2, 2 } };
-        item.Dic1.Add(3, 3);
-        item.Dic1.TryAdd(4, 4);
+        item.Dic1 = new StateMap<int, string> { { 1, "1_1" }, { 2, "1_2" } };
+        item.Dic1.Add(3, "1_3");
+        item.Dic1.TryAdd(4, "1_4");
         //测试初始添加
         item.Dic2 = new StateMap<string, Inner1>
             { { "5", new Inner1 { Dic1 = new StateMap<string, Inner2> { { "5", new Inner2 { I = 5 } } }, Inner2 = new Inner2{ I = 5 } } } };
@@ -64,7 +64,7 @@ public sealed class Program
         for (var i = 0; i < cc1List.Count; i++) Console.WriteLine($"查询结果1 {i}: " + cc1List[i].ToJson());
 
         //测试修改值类型
-        if (item.Dic1.TryGetValue(4, out _)) item.Dic1[4] = 44;
+        if (item.Dic1.TryGetValue(4, out _)) item.Dic1[4] = "1_44";
         item.Name = "newName2";
 
         //修改2级数据

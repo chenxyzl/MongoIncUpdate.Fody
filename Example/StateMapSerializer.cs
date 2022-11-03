@@ -28,7 +28,7 @@ public static class MongoKeyParse
 /*
 internal class TestDoc
 {
-    // [BsonStateMapOptions(StateMapRepresentation.ArrayOfDocuments)]
+    // [BsonSerializer(typeof(StateMapSerializer<ulong, Item>))]
     // public StateMap<ulong, Item> Items = new();
     
     [BsonId] public string Id { get; set; }
@@ -68,26 +68,12 @@ public class StateMapSerializer<TKey, TValue> : SerializerBase<StateMap<TKey, TV
         return ret;
     }
 
+    //应该直接传递value的序列化器。key的序列化器是StateMapSerializer<TKey, TValue>,不会打断递归,且key会被检查继承关系,检查失败会退化为原生类型。
     public bool TryGetMemberSerializationInfo(string memberName, out BsonSerializationInfo serializationInfo)
     {
-        if (memberName.StartsWith("k_"))
-        {
-            //k
-            serializationInfo = new BsonSerializationInfo(memberName, // this, GetType());
-                BsonSerializer.SerializerRegistry.GetSerializer<TValue>(),
-                BsonSerializer.SerializerRegistry.GetSerializer<TValue>().ValueType);
-            // serializationInfo = new BsonSerializationInfo(memberName.Substring(2), this, GetType());
-            // // BsonSerializer.SerializerRegistry.GetSerializer<TKey>(),
-            // // BsonSerializer.SerializerRegistry.GetSerializer<TKey>().ValueType);
-        }
-        else
-        {
-            //v
-            serializationInfo = new BsonSerializationInfo(memberName, // this, GetType());
-                BsonSerializer.SerializerRegistry.GetSerializer<TValue>(),
-                BsonSerializer.SerializerRegistry.GetSerializer<TValue>().ValueType);
-        }
-
+        serializationInfo = new BsonSerializationInfo(memberName, // this, GetType());
+            BsonSerializer.SerializerRegistry.GetSerializer<TValue>(),
+            BsonSerializer.SerializerRegistry.GetSerializer<TValue>().ValueType);
         return true;
     }
 
