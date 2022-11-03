@@ -3,7 +3,7 @@
 1. 给所有属性在编译器静态注入脏标记
 2. mongo存储时候检查藏标记来生成UpdateDefinition,并执行UpdateOneAsync保存
 
-## 实现原理(如不关系直接看底部如何使用)
+## 实现原理(如不关心直接看底部如何使用)
 ### 实现增量更新的脏标记注入
 1. 引用Fody包,增加FodyWeavers.xml,配置导入MongoIncUpdate(MongoIncUpdate工程为Fody的静态代码编织插件,增量方案的代码注入在这里实现)
 2. MongoIncUpdate工程的增加类ModuleWeaver(继承BaseModuleWeaver),会被fody调用(原理就是msbuild会在编译以前扫描引入的包的.targets文件,并执行其中的task,详情看《07_.net fody.md》)
