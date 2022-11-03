@@ -109,7 +109,7 @@ public interface IDiffUpdateable
     {
         foreach (var (propName, i) in NameMapping)
         {
-            if (IdxMapping.TryGetValue(i, out var prop)) continue;
+            if (!IdxMapping.TryGetValue(i, out var prop)) continue;
             var v = prop?.InvokeGet(this);
             if (v is IDiffUpdateable df) df.CleanDirties(); //清除脏标记
         }

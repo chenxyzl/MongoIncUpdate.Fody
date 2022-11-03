@@ -47,6 +47,16 @@ public class StateMap<K, V> : Dictionary<K, V>, IDiffUpdateable where K : notnul
         return base.TryAdd(key, v);
     }
 
+    public new void Clear()
+    {
+        foreach (var (k, _) in this)
+        {
+            _deleteMap[k] = true;
+        }
+
+        base.Clear();
+    }
+
 
     public void BuildUpdate<T>(List<UpdateDefinition<T>> defs, string? key)
     {
@@ -72,6 +82,7 @@ public class StateMap<K, V> : Dictionary<K, V>, IDiffUpdateable where K : notnul
         }
     }
 
+    //CleanDirties 必须是public。否则IDiffUpdateable调用不到这里
     public void CleanDirties() //直接写入时候才调用这个,提高性能
     {
         foreach (var (_, v) in this)

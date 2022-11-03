@@ -93,6 +93,7 @@ public sealed class Program
         //测试删除数据
         item.Dic1.Remove(4);
         item.Dic2.Remove("6");
+        item.Dic1[4]="new_4";
 
         //保存数据
         await item.SaveIm(cc);
