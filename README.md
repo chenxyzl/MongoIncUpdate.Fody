@@ -1,7 +1,8 @@
 # PropertyChangeWatch.Fody
 # mongo增量方案
-1. 给所有属性在编译器静态注入脏标记(暂不支持list,dictionary用statemap替换)
-2. mongo存储时候检查藏标记来生成UpdateDefinition,并执行UpdateOneAsync保存
+1. 给所有属性在编译器静态注入脏标记
+2. 集合类型:Dictionary用StateMap替换,暂不支持List(会退化为全量保存).
+3. mongo存储时候检查藏标记来生成UpdateDefinition,并执行UpdateOneAsync保存
 
 ## 实现原理(如不关心直接看底部如何使用)
 ### 实现增量更新的脏标记注入
