@@ -4,8 +4,6 @@ using MongoDB.Driver;
 
 namespace Example;
 
-[BsonDiscriminator(RootClass = false)]
-[BsonKnownTypes(typeof(Item), typeof(Inner1), typeof(Inner2))]
 public class StateMap<K, V> : Dictionary<K, V>, IDiffUpdateable where K : notnull
 {
     private readonly Dictionary<K, bool> _deleteMap = new();
