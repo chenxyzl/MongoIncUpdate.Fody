@@ -21,15 +21,14 @@
 2. BuildUpdate中for循环遍历脏标记,更具标记的位置来获取对象的值和类型相关属性
 3. 如果是脏则整体存储,如果不是脏则检查是否是引用类型(string特殊引用类型除外),如果类型没有被注入插件接口则退化为整体存储(保底措施),有递归调用BuildUpdate
 4. 增加StateMap(继承至MongoIncUpdateInterfaceAttribute标记的接口)来支持集合类型,(实现了StateMapSerializer来支持序列化反序列化)   
-   这里注意dic[a]=xx时候,mongo的序列化有个大坑
-   1. 在StringFieldDefinitionHelper.Resolve获取类型时候对于正常的obj.property = xx中, xx的类型是来至于obj的member中同名property的类型获取出来的。
-   2. 在obj[key]=xx中。也会变为obj.key=xx形式,走上述类型推断逻辑,会变成获取obj中成员同名为key的类型,而字典的key最终都为string类型。接下来又两个错误   
+   这里注意dic[key]=value时候,mongo的序列化有个大坑
+   1. 在StringFieldDefinitionHelper.Resolve获取类型时候对于正常的obj.property = value中, value的类型是来至于obj的member中同名property的类型获取出来的。
+   2. 在obj[key]=value中。也会变为obj.key=value形式,走上述类型推断逻辑,会变成获取obj中成员同名为key的类型,而字典的key最终都为string类型。接下来又两个错误   
         1. key为全部数值类型,尝试转化为IBsonArraySerializer且失败,直接跳出类型推断代码,在上层退化为默认类型。
         2. 非全数值类型,尝试转化为IBsonDocumentSerializer类型,而key一般为string类型,转换失败,直接跳出类型推断代码,在上层退化为默认类型。
    3. 解决方法
         1. StateMapSerializer的序列化时候把key转换为k_key的形式,避免上述中全数值类型被终止类型插件   
-        2. 接着实现IBsonDocumentSerializer接口,在TryGetMemberSerializationInfo函数中对于已k_开头的成员名返回一个IBsonDocumentSerializer序列化器。避免类型转换失败(此时类型对不上没关系,因为类型检查继承失败会退化为默认序列化器,而key为简单类型,退化后依然能正常序列化)
-        3. 接2在非k_开头的成员名中返回TValue的真正的序列化器,保证值的类型推断正常进行
+        2. 接着实现IBsonDocumentSerializer接口,在TryGetMemberSerializationInfo函数中返回value的序列化器。key的序列化器是StateMapSerializer<TKey, TValue>,不会打断递归,且key会被检查继承关系,检查失败会退化为原生类型,能保证key正常序列化。对于value:此操作类似把value当作了key的成员类型。
 5. 调用await collection.UpdateOneAsync(filter, setter, new UpdateOptions { IsUpsert = true });来保存
 
 ## 如何使用
