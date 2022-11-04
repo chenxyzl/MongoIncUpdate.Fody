@@ -8,19 +8,20 @@ public partial class ModuleWeaver
     public void InjectOverrideProperty(TypeDefinition typ, string propName)
     {
         //找到基类Prop 
-        var baseProp = _typeSelector.SelectPropFromType(_mongoIncUpdateInterface, $"{propName}");
-        //创建field//字段
+        var baseProp = _typeSelector.SelectPropFromType(_mongoIncUpdateInterface, $"{propName}");   
+        //创建field//字段 
         var fieldDef = new FieldDefinition($"_{propName.FirstCharToLowerCase()}", FieldAttributes.Private,
-            baseProp.PropertyType);
+            ModuleDefinition.ImportReference(baseProp.PropertyType));
         typ.Fields.Add(fieldDef);
 
         //插入getter
-        var baseGetPropMethodDef = _typeSelector.SelectMethodFromType(_mongoIncUpdateInterface, $"get_{propName}");
+        var tempBaseGetPropMethodDef = _typeSelector.SelectMethodFromType(_mongoIncUpdateInterface, $"get_{propName}");
+        var baseGetPropMethodDef = ModuleDefinition.ImportReference(tempBaseGetPropMethodDef); 
         var getPropMethodDef = new MethodDefinition(
             $"{baseGetPropMethodDef.DeclaringType.FullName}.{baseGetPropMethodDef.Name}",
             MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.NewSlot |
             MethodAttributes.SpecialName | MethodAttributes.Virtual | MethodAttributes.Final,
-            baseGetPropMethodDef.ReturnType);
+            ModuleDefinition.ImportReference(baseGetPropMethodDef.ReturnType));
         getPropMethodDef.Overrides.Add(baseGetPropMethodDef);
         // getPropMethodDef.CustomAttributes.Add(new CustomAttribute(CompilerGeneratedAttributeTypeReference));
         getPropMethodDef.Body.Instructions.Append(
@@ -31,12 +32,13 @@ public partial class ModuleWeaver
         typ.Methods.Add(getPropMethodDef);
 
         //插入setter
-        var baseSetPropMethodDef = _typeSelector.SelectMethodFromType(_mongoIncUpdateInterface, $"set_{propName}");
+        var tempBaseSetPropMethodDef = _typeSelector.SelectMethodFromType(_mongoIncUpdateInterface, $"set_{propName}");
+        var baseSetPropMethodDef = ModuleDefinition.ImportReference(tempBaseSetPropMethodDef);
         var setPropMethodDef = new MethodDefinition(
             $"{baseSetPropMethodDef.DeclaringType.FullName}.{baseSetPropMethodDef.Name}",
             MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.NewSlot |
             MethodAttributes.SpecialName | MethodAttributes.Virtual | MethodAttributes.Final,
-            baseSetPropMethodDef.ReturnType);
+            ModuleDefinition.ImportReference(baseSetPropMethodDef.ReturnType));
         setPropMethodDef.Overrides.Add(baseSetPropMethodDef);
         foreach (var parameterDefinition in baseSetPropMethodDef.Parameters)
             setPropMethodDef.Parameters.Add(parameterDefinition);
@@ -56,7 +58,7 @@ public partial class ModuleWeaver
         //Prop重载
         var prop = new PropertyDefinition($"{_mongoIncUpdateInterface}.{baseProp.Name}",
             baseProp.Attributes,
-            baseProp.PropertyType);
+            ModuleDefinition.ImportReference(baseProp.PropertyType));
         prop.GetMethod = BuildGetMethodDefinitionFromBase(
             $"{_mongoIncUpdateInterface}.{baseProp.GetMethod.Name}",
             typ,

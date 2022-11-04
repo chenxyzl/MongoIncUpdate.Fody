@@ -7,22 +7,22 @@ namespace Example;
 [MongoIncUpdate]
 public class Inner2
 {
-    //多层嵌套  任意测试了         
+    //多层嵌套  任意测试了                  
     public int I { get; set; }
-    [BsonIgnore] public int XX { get; set; }
+    [BsonIgnore] public int XX { get; set; }          
 }
 
 [MongoIncUpdate]
-public class Inner1
+public class Inner1 
 {
-    //测试嵌套的dictionary的引用类型嵌套 
+    //测试嵌套的dictionary的引用类型嵌套   
     [BsonSerializer(typeof(StateMapSerializer<string, Inner2>))]
     public StateMap<string, Inner2> Dic1 { get; set; } = new();
 
     public Inner2 Inner2 { get; set; } = new();
 }
 
-[MongoIncUpdate]
+[MongoIncUpdate]   
 public class Item
 {
     //id

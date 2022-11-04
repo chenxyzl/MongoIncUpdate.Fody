@@ -10,19 +10,17 @@ public partial class ModuleWeaver
 
     public void FindCoreReferences()
     {
-        //BitArray
-        var bitArrayTypeDefinition = FindTypeDefinition("System.Collections.BitArray");
-        ModuleDefinition.Assembly.MainModule.ImportReference(bitArrayTypeDefinition.Resolve());
 
+        // var v  = _typeSelector.TestSelect(ModuleDefinition)??throw new ArgumentNullException($"\"Program.PlaceHold\" must not null");
+        // _mongoIncUpdateInterface = v.Interfaces[0].InterfaceType ?? throw new ArgumentNullException($"\"Program.PlaceHold interface mongoIncUpdateInterface \" must not null");
+        
         var mongoIncUpdate = ModuleDefinition.FindAssembly("MongoIncUpdate.Base") ??
                              throw new ArgumentNullException($"\"MongoIncUpdate.Base\" must not null");
-        _mongoIncUpdateInterface =
+        
+        var mongoIncUpdateInterface =
             ModuleDefinition.FindType("MongoIncUpdate.Base", "IDiffUpdateable", mongoIncUpdate) ??
             throw new ArgumentNullException($"\"MongoIncUpdate.Base.IDiffUpdateable\" must not null");
-
-        //
-        // // mongoIncUpdate.
-        // MongoIncUpdateInterface = ModuleDefinition.FindType("MongoIncUpdate.Base", "IDiffUpdateable", mongoIncUpdate);
-        // MongoIncUpdateInterface.Resolve();
+        
+        _mongoIncUpdateInterface = ModuleDefinition.ImportReference(mongoIncUpdateInterface.Resolve());
     }
 }

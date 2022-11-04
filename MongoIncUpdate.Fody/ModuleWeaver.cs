@@ -15,7 +15,7 @@ public partial class ModuleWeaver : BaseModuleWeaver
         Debugger.Launch(); 
     }
 
-    public ModuleWeaver(
+    public ModuleWeaver( 
         TypeSelector typeSelector)
     {
         _typeSelector = typeSelector;
@@ -39,7 +39,8 @@ public partial class ModuleWeaver : BaseModuleWeaver
 
             //插入init函数调用
             //init方法
-            var initMethodDef = _typeSelector.SelectMethodFromType(_mongoIncUpdateInterface, "Init");
+            var tempInitMethodDef = _typeSelector.SelectMethodFromType(_mongoIncUpdateInterface, "Init");
+            var initMethodDef = ModuleDefinition.ImportReference(tempInitMethodDef);
             var ctors = typ.Methods.Where(m => m.IsConstructor).ToList();
             foreach (var ctor in ctors)
             {

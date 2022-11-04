@@ -21,6 +21,17 @@ public class TypeSelector
 
         return typesToProcess;
     }
+    
+    
+    public TypeDefinition? TestSelect(ModuleDefinition moduleDefinition)
+    {
+        var typesToProcess = new List<TypeDefinition>();
+        foreach (var type in moduleDefinition.GetTypes())
+            if (type.FullName == "Example.PlaceHold")
+                return type;
+
+        return null;
+    }
 
     public MethodDefinition SelectMethodFromType(TypeReference typeReference, string methodName)
     {

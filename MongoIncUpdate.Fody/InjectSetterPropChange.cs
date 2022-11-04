@@ -4,13 +4,14 @@ using Mono.Cecil.Cil;
 namespace MongoIncUpdate.Fody;
 
 public partial class ModuleWeaver
-{
+{ 
     public void InjectPropSetterPropChangeNotify(TypeDefinition type)
     {
-        var propChangeMethod = _typeSelector.SelectMethodFromType(_mongoIncUpdateInterface, "PropChange");
+        var tempPropChangeMethod = _typeSelector.SelectMethodFromType(_mongoIncUpdateInterface, "PropChange");
+        var propChangeMethod = ModuleDefinition.ImportReference(tempPropChangeMethod);
         foreach (var prop in type.Properties)
-        {
-            var setter = prop.SetMethod;
+        {  
+            var setter = prop.SetMethod; 
             if (setter != null && setter.IsPublic && setter.HasBody)
             {
                 var last = setter.Body.Instructions.Count - 1; //插入到ret之前的位置
