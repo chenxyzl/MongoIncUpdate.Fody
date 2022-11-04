@@ -73,8 +73,7 @@ public static class PropertyCallAdapterProvider
 
         //注意这里string也当作值类型来处理
         return Activator.CreateInstance(concreteAdapterType, getterInvocation, property.Name,
-                       property.PropertyType.IsValueType || property.PropertyType.FullName == "System.String") as
-                   IPropertyCallAdapter ??
+                   IDiffUpdateable.IsDirectType(property.PropertyType)) as IPropertyCallAdapter ??
                throw new InvalidOperationException();
         // return getterInvocation;
     }

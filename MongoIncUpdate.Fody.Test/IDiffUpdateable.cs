@@ -76,9 +76,7 @@ public interface IDiffUpdateable
             if (v is IDiffUpdateable sv)
                 sv.BuildUpdate(defs, MakeKey(prop.PropName(), key));
             else
-                defs.Add(v == null
-                    ? update.Unset(MakeKey(prop.PropName(), key))
-                    : update.Set(MakeKey(prop.PropName(), key), v));
+                defs.Add(update.Set(MakeKey(prop.PropName(), key), v));
         }
 
         Dirties.SetAll(false);
@@ -94,6 +92,11 @@ public interface IDiffUpdateable
         builder.AppendLiteral(name);
 
         return builder.ToStringAndClear();
+    }
+
+    static bool IsDirectType(Type type)
+    {
+        return type.IsValueType || type.FullName == "System.String";
     }
 
     void CleanDirties() //直接写入时候才调用这个,提高性能

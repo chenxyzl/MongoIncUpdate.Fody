@@ -34,7 +34,11 @@
 5. 调用await collection.UpdateOneAsync(filter, setter, new UpdateOptions { IsUpsert = true });来保存
 
 ## 如何使用
-### 1.存储实体构造
+### 1.<font color=red>注册序列化器</font>(因为嵌套类型需要)
+最好在链接mongo数据库之前   
+<font color=red>BsonSerializer.RegisterGenericSerializerDefinition(typeof(StateMap<,>), typeof(StateMapSerializer<,>));</font>
+
+### 2.存储实体构造
 ``` C#
 [MongoIncUpdate]
 public class Inner2
@@ -77,7 +81,7 @@ public class Item
 }
 ```
 
-### 2.保存数据
+### 3.保存数据
 ```c#
 public static async Task SaveIm(this Item self, IMongoCollection<Item> collection)
     {
