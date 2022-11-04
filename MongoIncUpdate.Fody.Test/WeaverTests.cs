@@ -412,9 +412,20 @@ public class WeaverTests
         Assert.Single(result.StateMapStateMapItem[1]!);
         Assert.False(result.StateMapStateMapItem[1]!.ContainsKey(111));
 
-        _output.WriteLine("增量清空StateMap.Clean");
         _output.WriteLine("增量清空StateMap.StateMap.Clean");
+        a.StateMapStateMapItem[1]?.Clear();
+        await cc.IncUpdate(a);
+        filter = Builders<NestStateMapStateMapItem>.Filter.Eq(x => x.Id, a.Id);
+        result = (await cc.FindAsync(filter)).First();
+        Assert.Empty(result.StateMapStateMapItem[1]!);
+        Assert.Equal(2, result.StateMapStateMapItem[2]!.Count);
 
+        _output.WriteLine("增量清空StateMap.Clean");
+        a.StateMapStateMapItem.Clear();
+        await cc.IncUpdate(a);
+        filter = Builders<NestStateMapStateMapItem>.Filter.Eq(x => x.Id, a.Id);
+        result = (await cc.FindAsync(filter)).First();
+        Assert.Empty(result.StateMapStateMapItem);
         _output.WriteLine("---TestNestStateMapStateMapItem完成---");
     }
 
