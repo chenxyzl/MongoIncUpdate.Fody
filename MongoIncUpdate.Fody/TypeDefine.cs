@@ -1,8 +1,5 @@
-﻿using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Mono.Cecil;
-using Mono.Cecil.Rocks;
 
 namespace MongoIncUpdate.Fody;
 

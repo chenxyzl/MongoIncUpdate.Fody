@@ -39,9 +39,7 @@ public partial class ModuleWeaver
             baseSetPropMethodDef.ReturnType);
         setPropMethodDef.Overrides.Add(baseSetPropMethodDef);
         foreach (var parameterDefinition in baseSetPropMethodDef.Parameters)
-        {
             setPropMethodDef.Parameters.Add(parameterDefinition);
-        }
 
         // setPropMethodDef.CustomAttributes.Add(new CustomAttribute(CompilerGeneratedAttributeTypeReference));
         setPropMethodDef.Body.Instructions.Append(

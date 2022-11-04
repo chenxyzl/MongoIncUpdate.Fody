@@ -1,7 +1,8 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
+using MongoIncUpdate.Fody.Test;
 
-namespace Example;
+namespace MongoIncUpdate.Fody.Test;
 
 public static class IncUpdateExt
 {
@@ -10,15 +11,9 @@ public static class IncUpdateExt
         var find = typeof(BsonIdAttribute);
         var props = self.GetType().GetProperties();
         foreach (var v in props)
-        {
-            foreach (var attr in v.GetCustomAttributes(false))
-            {
-                if (attr.GetType().FullName == find.FullName)
-                {
-                    return v.GetValue(self); 
-                }
-            }
-        }
+        foreach (var attr in v.GetCustomAttributes(false))
+            if (attr.GetType().FullName == find.FullName)
+                return v.GetValue(self);
         return null;
     }
 

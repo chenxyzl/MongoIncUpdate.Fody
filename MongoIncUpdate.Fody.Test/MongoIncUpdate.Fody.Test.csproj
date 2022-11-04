@@ -4,6 +4,30 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>MongoIncUpdate.Fody.Test</RootNamespace>
     </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Fody" Version="6.6.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <WeaverFiles Include="$(MsBuildThisFileDirectory)..\MongoIncUpdate.Fody\bin\Debug\net6.0\MongoIncUpdate.Fody.dll" />
+        <WeaverFiles Include="$(MsBuildThisFileDirectory)..\MongoIncUpdate.Fody\bin\Debug\net6.0\MongoIncUpdate.Fody.pdb" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\AssemblyToProcess\AssemblyToProcess.csproj" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0-rc.1.22426.10" />
+        <PackageReference Include="mongocsharpdriver" Version="2.17.1" />
+        <PackageReference Include="MongoDB.Bson" Version="2.17.1" />
+        <PackageReference Include="MongoDB.Driver" Version="2.17.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+        <PackageReference Include="xunit" Version="2.4.2" />
+    </ItemGroup>
 
 </Project>

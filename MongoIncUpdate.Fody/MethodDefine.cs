@@ -1,11 +1,11 @@
 ﻿using Mono.Cecil;
-using Mono.Cecil.Cil;
 
 namespace MongoIncUpdate.Fody;
 
 public partial class ModuleWeaver
 {
-    private MethodDefinition BuildGetMethodDefinitionFromBase(string fullName,TypeDefinition targetType,MethodDefinition baseMethod)
+    private MethodDefinition BuildGetMethodDefinitionFromBase(string fullName, TypeDefinition targetType,
+        MethodDefinition baseMethod)
     {
         var outMethod = new MethodDefinition(fullName,
             baseMethod.Attributes, baseMethod.ReturnType)
@@ -16,8 +16,8 @@ public partial class ModuleWeaver
             MetadataToken = baseMethod.MetadataToken,
             MethodReturnType = baseMethod.MethodReturnType,
             ImplAttributes = baseMethod.ImplAttributes,
-            Body =baseMethod.Body,
-            PInvokeInfo = baseMethod.PInvokeInfo,
+            Body = baseMethod.Body,
+            PInvokeInfo = baseMethod.PInvokeInfo
             // Overrides = baseMethod.Overrides,
             // Parameters = baseMethod.Parameters,
             // SecurityDeclarations =  baseMethod.SecurityDeclarations
