@@ -4,6 +4,11 @@
     &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestNestStateMapStateMapItem&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=3f1b6c3b_002D3884_002D4887_002Dbffe_002Dc1bc79be6028/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestNestStateMapStateMapItem #5" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=71bc2d02_002D2846_002D4c70_002Dab7e_002D2e80852b4cb4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestSampleInt" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestSampleInt&lt;/TestId&gt;&#xD;
@@ -17,13 +22,27 @@
     &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestNestStateMapStateMapItem&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=be90203c_002Db8bc_002D4dde_002D91ce_002Dff1b7cb89d39/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestNestStateMapStateMapItem #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestNestStateMapStateMapItem&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestNestStateMapItem&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestSampleInt&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestNestedItem&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestNestNestedItem&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestIntKeyStateMapInt&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestStringKeyStateMapString&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e710e67d_002D8061_002D4c46_002Dafff_002D0e4f11aaa545/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestNestStateMapStateMapItem #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestNestStateMapStateMapItem&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestNestStateMapItem&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestSampleInt&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestNestedItem&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestNestNestedItem&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestIntKeyStateMapInt&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e7cf03f5_002Dd4c2_002D44d2_002Db29a_002Da5b6588874ab/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestNestStateMapStateMapItem #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestNestStateMapStateMapItem&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e7cf03f5_002Dd4c2_002D44d2_002Db29a_002Da5b6588874ab/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestNestStateMapStateMapItem #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;ProjectFile&gt;DA8A294A-27CC-4EEC-88F7-9FE526E8022E/f:WeaverTests.cs&lt;/ProjectFile&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

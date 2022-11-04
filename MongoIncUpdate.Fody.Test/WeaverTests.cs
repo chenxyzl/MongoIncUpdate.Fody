@@ -66,21 +66,28 @@ public class NestStateMapStateMapItem
 
 public class WeaverTests
 {
-    private readonly IMongoDatabase _db;
-    private ITestOutputHelper _output;
+    private static IMongoDatabase _db;
+    private static ITestOutputHelper _output;
+
+    private static bool _init;
 
     public WeaverTests(ITestOutputHelper output)
     {
-        BsonSerializer.RegisterGenericSerializerDefinition(typeof(StateMap<,>), typeof(StateMapSerializer<,>));
-
         _output = output;
-        _output.WriteLine("---init test begin---");
-        //创建mongo链接
-        var connectionString = "mongodb://admin:123456@127.0.0.1:27017/test?authSource=admin";
-        var mongoClient = new MongoClient(connectionString);
-        _db = mongoClient.GetDatabase(new MongoUrlBuilder(connectionString).DatabaseName);
-        //构造序列化
-        _output.WriteLine("---init test success---");
+        lock (this)
+        {
+            if (_init) return;
+            _init = true;
+            BsonSerializer.RegisterGenericSerializerDefinition(typeof(StateMap<,>), typeof(StateMapSerializer<,>));
+
+            _output.WriteLine("---init test begin---");
+            //创建mongo链接
+            var connectionString = "mongodb://admin:123456@127.0.0.1:27017/test?authSource=admin";
+            var mongoClient = new MongoClient(connectionString);
+            _db = mongoClient.GetDatabase(new MongoUrlBuilder(connectionString).DatabaseName);
+            //构造序列化
+            _output.WriteLine("---init test success---");
+        }
     }
 
 
@@ -390,7 +397,20 @@ public class WeaverTests
         Assert.Equal(11111, result.StateMapStateMapItem[1]![111]!.I);
 
         _output.WriteLine("增量删除StateMap.value");
+        a.StateMapStateMapItem.Remove(3);
+        await cc.IncUpdate(a);
+        filter = Builders<NestStateMapStateMapItem>.Filter.Eq(x => x.Id, a.Id);
+        result = (await cc.FindAsync(filter)).First();
+        Assert.Equal(2, result.StateMapStateMapItem.Count);
+        Assert.False(result.StateMapStateMapItem.ContainsKey(3));
+
         _output.WriteLine("增量删除StateMap.StateMap.value");
+        a.StateMapStateMapItem[1]?.Remove(111);
+        await cc.IncUpdate(a);
+        filter = Builders<NestStateMapStateMapItem>.Filter.Eq(x => x.Id, a.Id);
+        result = (await cc.FindAsync(filter)).First();
+        Assert.Single(result.StateMapStateMapItem[1]!);
+        Assert.False(result.StateMapStateMapItem[1]!.ContainsKey(111));
 
         _output.WriteLine("增量清空StateMap.Clean");
         _output.WriteLine("增量清空StateMap.StateMap.Clean");
