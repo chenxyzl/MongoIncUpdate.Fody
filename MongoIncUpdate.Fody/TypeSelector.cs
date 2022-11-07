@@ -1,4 +1,5 @@
-﻿using Mono.Cecil;
+﻿using Fody;
+using Mono.Cecil;
 using Mono.Cecil.Rocks;
 
 namespace MongoIncUpdate.Fody;
@@ -10,11 +11,11 @@ public class TypeSelector
         foreach (var typ in types)
         {
             if (!IsContainer(typ))
-                throw new Exception($"{typ.Name} member must only property. [means:method only getter/setter");
+                throw new WeavingException($"{typ.Name} member must only property. [means:method only getter/setter");
             if (HasPublicFiled(typ))
-                throw new Exception($"{typ.Name} member must only property. [means: no public filed]");
+                throw new WeavingException($"{typ.Name} member must only property. [means: no public filed]");
             if (!CanVirtualize(typ))
-                throw new Exception($"{typ.Name} must only public seal class. [means: public seal class]");
+                throw new WeavingException($"{typ.Name} must only public seal class. [means: public seal class]");
         }
             
     }
@@ -35,10 +36,10 @@ public class TypeSelector
         foreach (var type in moduleDefinition.GetTypes())
             if (HasMongoIncUpdateInterfaceAttribute(type) && type.IsInterface)
                 typesToProcess.Add(type);
-        if (typesToProcess.Count < 1) throw new Exception("MongoIncUpdateInterfaceAttribute must exist");
+        if (typesToProcess.Count < 1) throw new WeavingException("MongoIncUpdateInterfaceAttribute must exist");
 
         if (typesToProcess.Count > 1)
-            throw new Exception($"MongoIncUpdateInterfaceAttribute must only one; now:{typesToProcess.Count}");
+            throw new WeavingException($"MongoIncUpdateInterfaceAttribute must only one; now:{typesToProcess.Count}");
 
         return typesToProcess[0];
     }
@@ -50,10 +51,10 @@ public class TypeSelector
             if (type.Name == methodName)
                 methodsToProcess.Add(type);
         if (methodsToProcess.Count < 1)
-            throw new Exception($"SelectMethodFromType ${typeReference.Name}:{methodName} must exist");
+            throw new WeavingException($"SelectMethodFromType ${typeReference.Name}:{methodName} must exist");
 
         if (methodsToProcess.Count > 1)
-            throw new Exception(
+            throw new WeavingException(
                 $"SelectMethodFromType ${typeReference.Name}:{methodName} must only one; now:{methodsToProcess.Count}");
 
         return methodsToProcess[0];
@@ -66,10 +67,10 @@ public class TypeSelector
             if (type.Name == propName)
                 propToProcess.Add(type);
         if (propToProcess.Count < 1)
-            throw new Exception($"SelectMethodFromType ${typeReference.Name}:{propName} must exist");
+            throw new WeavingException($"SelectMethodFromType ${typeReference.Name}:{propName} must exist");
 
         if (propToProcess.Count > 1)
-            throw new Exception(
+            throw new WeavingException(
                 $"SelectMethodFromType ${typeReference.Name}:{propName} must only one; now:{propToProcess.Count}");
 
         return propToProcess[0];

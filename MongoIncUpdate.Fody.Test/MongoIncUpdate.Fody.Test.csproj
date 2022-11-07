@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
         <PackageReference Include="Fody" Version="6.6.4" />
     </ItemGroup>
 

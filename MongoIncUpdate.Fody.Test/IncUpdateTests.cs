@@ -1,4 +1,7 @@
 ﻿using AssemblyToProcess;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Loggers;
+using BenchmarkDotNet.Running;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
@@ -96,7 +99,8 @@ public partial class WeaverTests
             var connectionString = "mongodb://admin:123456@127.0.0.1:27017/test?authSource=admin";
             var mongoClient = new MongoClient(connectionString);
             _db = mongoClient.GetDatabase(new MongoUrlBuilder(connectionString).DatabaseName);
-            //构造序列化
+
+            //
             _output.WriteLine("---init test success---");
         }
     }
@@ -499,7 +503,7 @@ public partial class WeaverTests
                 {
                     NestItem = new ItemIntKeyStateMapInt
                     {
-                        IntInt = new StateMap<int, int> { { 4 ,4 }, { 44, 44 } }
+                        IntInt = new StateMap<int, int> { { 4, 4 }, { 44, 44 } }
                     }
                 }
             }
@@ -543,7 +547,7 @@ public partial class WeaverTests
         Assert.Equal(2, result.Item[4]!.NestItem.IntInt.Count);
         Assert.Equal(3333, result.Item[3]!.NestItem.IntInt[3333]);
         Assert.Equal(4444, result.Item[4]!.NestItem.IntInt[4444]);
-        
+
         _output.WriteLine("v.Item[3].NestItem.IntInt覆盖检查");
         a.Item[4]!.NestItem.IntInt = new StateMap<int, int> { { 44444, 44444 }, { 444444, 444444 } };
         await cc.IncUpdate(a);
@@ -554,7 +558,7 @@ public partial class WeaverTests
         Assert.Equal(2, result.Item[4]!.NestItem.IntInt.Count);
         Assert.Equal(3333, result.Item[3]!.NestItem.IntInt[3333]);
         Assert.Equal(44444, result.Item[4]!.NestItem.IntInt[44444]);
-        
+
         _output.WriteLine("v.Item[3].NestItem.IntInt[3333]覆盖检查");
         a.Item[3]!.NestItem.IntInt[3333] = 3;
         await cc.IncUpdate(a);
@@ -565,7 +569,7 @@ public partial class WeaverTests
         Assert.Equal(2, result.Item[4]!.NestItem.IntInt.Count);
         Assert.Equal(3, result.Item[3]!.NestItem.IntInt[3333]);
         Assert.Equal(44444, result.Item[4]!.NestItem.IntInt[44444]);
-        
+
         _output.WriteLine("v.Item[3].NestItem.IntInt.remove(3333)删除检查");
         a.Item[3]!.NestItem.IntInt.Remove(3333);
         await cc.IncUpdate(a);
@@ -576,7 +580,7 @@ public partial class WeaverTests
         Assert.Equal(2, result.Item[4]!.NestItem.IntInt.Count);
         Assert.False(result.Item[3]!.NestItem.IntInt.ContainsKey(3333));
         Assert.Equal(44444, result.Item[4]!.NestItem.IntInt[44444]);
-        
+
         _output.WriteLine("v.Item[3].NestItem.IntInt.Clean()删除检查");
         a.Item[3]!.NestItem.IntInt.Clear();
         await cc.IncUpdate(a);
@@ -586,14 +590,14 @@ public partial class WeaverTests
         Assert.Empty(result.Item[3]!.NestItem.IntInt);
         Assert.Equal(2, result.Item[4]!.NestItem.IntInt.Count);
         Assert.Equal(44444, result.Item[4]!.NestItem.IntInt[44444]);
-        
+
         _output.WriteLine("v.Item.Clean()删除检查");
         a.Item.Clear();
         await cc.IncUpdate(a);
         filter = Builders<ItemStateMapItemStateMapItem>.Filter.Eq(x => x.Id, a.Id);
         result = (await cc.FindAsync(filter)).First();
         Assert.Empty(result.Item);
-        
+
         _output.WriteLine("---TestNestStateMapItemStateMapItem完成---");
     }
 }

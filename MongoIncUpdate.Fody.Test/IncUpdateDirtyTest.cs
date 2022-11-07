@@ -1,6 +1,10 @@
 ﻿using System.Collections;
 using System.Reflection;
 using AssemblyToProcess;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Loggers;
+using BenchmarkDotNet.Running;
+using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using Xunit;
 
@@ -18,7 +22,11 @@ public class DirtyItem
 [MongoIncUpdate]
 public class DirtyNestItem
 {
+    [BsonId] public int Id { get; set; }
+
     public DirtyItem Item { get; set; } //0
+
+    [BsonSerializer(typeof(StateMapSerializer<int, DirtyItem>))]
     public StateMap<int, DirtyItem> StateMap { get; set; } //1
 }
 
@@ -171,7 +179,26 @@ public partial class WeaverTests
         Assert.True(dirties != null);
         Assert.Equal(4, dirties.Count);
         for (var i = 0; i < dirties.Count; i++) Assert.False(dirties.Get(i));
-        
+
         _output.WriteLine("---DirtyTest完成---");
+    }
+
+    
+    // [Fact]
+    async Task TestBenchmarkIncUpdate()
+    {
+        // await TestDirtyNestItem();
+        // await TestOldNestItem();
+        var logger = new AccumulationLogger();
+
+        var config = ManualConfig.Create(DefaultConfig.Instance)
+            .AddLogger(logger)
+            .WithOptions(ConfigOptions.DisableOptimizationsValidator);
+
+        _output.WriteLine("---TestBenchmarkIncUpdate---");
+        var v = BenchmarkRunner.Run<IncUpdateBenchmark>(config);
+        _output.WriteLine("---TestBenchmarkIncUpdate完成---");
+        _output.WriteLine(logger.GetLog());
+        ;
     }
 }
