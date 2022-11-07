@@ -75,7 +75,7 @@ public class ItemStateMapItemStateMapItem
     public StateMap<int, ItemNestItemStateMap> Item { get; set; } = new();
 }
 
-public class WeaverTests
+public partial class WeaverTests
 {
     private static IMongoDatabase _db;
     private static ITestOutputHelper _output;
