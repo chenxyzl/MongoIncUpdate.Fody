@@ -63,8 +63,11 @@ public class StateMap<K, V> : Dictionary<K, V>, IDiffUpdateable where K : notnul
     public void CleanDirties() //直接写入时候才调用这个,提高性能
     {
         foreach (var (_, v) in this)
-            if (v is IDiffUpdateable df)
-                df.CleanDirties(); //清除脏标记
+        {
+            if (v is IDiffUpdateable df) df.CleanDirties(); //清除脏标记
+        }
+
+        _dirtySet.Clear();
     }
 
     public new bool Remove(K key)

@@ -5,18 +5,25 @@ namespace MongoIncUpdate.Fody;
 
 public class TypeSelector
 {
-    public void MustAllContainerAndProperty(IEnumerable<TypeDefinition> types)
+    public void CheckTypeLegal(IEnumerable<TypeDefinition> types)
     {
         foreach (var typ in types)
-            if (!IsContainer(typ) || HasPublicFiled(typ))
-                throw new Exception($"{typ.Name} member must only property. [means: no public filed, no method]");
+        {
+            if (!IsContainer(typ))
+                throw new Exception($"{typ.Name} member must only property. [means:method only getter/setter");
+            if (HasPublicFiled(typ))
+                throw new Exception($"{typ.Name} member must only property. [means: no public filed]");
+            if (!CanVirtualize(typ))
+                throw new Exception($"{typ.Name} must only public seal class. [means: public seal class]");
+        }
+            
     }
 
     public IEnumerable<TypeDefinition> Select(ModuleDefinition moduleDefinition)
     {
         var typesToProcess = new List<TypeDefinition>();
         foreach (var type in moduleDefinition.GetTypes())
-            if (CanVirtualize(type) && HasMongoIncUpdateAttribute(type))
+            if (HasMongoIncUpdateAttribute(type))
                 typesToProcess.Add(type);
 
         return typesToProcess;
