@@ -184,7 +184,8 @@ public partial class WeaverTests
     }
 
 
-    [Fact]
+    // this will begin benchmark and cost long time
+    // [Fact]
     async Task TestBenchmarkIncUpdate()
     {
         // await TestDirtyNestItem();

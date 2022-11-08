@@ -41,7 +41,7 @@ public class IncUpdateBenchmark
     private static IMongoCollection<BsonDocument> _cc2;
     private static BsonDocument test2;
     private static Random _r;
-    private const int _stateMapCount = 100;
+    private const int _stateMapCount = 1000;
 
     private static bool _init;
 
@@ -102,69 +102,7 @@ public class IncUpdateBenchmark
             }
         }
     }
-
-    //性能测试
-    async Task TestDirtyNestItem()
-    {
-        DirtyNestItem benchmarkIncUpdateData;
-        Random r;
-        int stateMapCount = 100;
-
-        benchmarkIncUpdateData = new DirtyNestItem 
-        {
-            Id = 1,
-            Item = new DirtyItem { Int = 1, Str = "1", Flo = 1.0f, Dou = 1.0 },
-            StateMap = new()
-        };
-        r = new Random();
-        for (int i = 0; i < stateMapCount; i++)
-        {
-            var n = r.Next() % 1000;
-            benchmarkIncUpdateData.StateMap.Add(i, new DirtyItem
-            {
-                Int = n,
-                Flo = n,
-                Dou = n,
-                Str = n.ToString()
-            });
-        }
-
-        var cc = _db.GetCollection<DirtyNestItem>(nameof(DirtyNestItem));
-        await cc.IncUpdate(benchmarkIncUpdateData);
-    }
-
-    async Task TestOldNestItem()
-    {
-        NestOldItem benchmarkIncUpdateData;
-        Random r;
-        int stateMapCount = 100;
-
-        benchmarkIncUpdateData = new NestOldItem
-        {
-            Id = 1,
-            Item = new OldItem { Int = 1, Str = "1", Flo = 1.0f, Dou = 1.0 },
-            StateMap = new()
-        };
-        r = new Random();
-        for (int i = 0; i < stateMapCount; i++)
-        {
-            var n = r.Next() % 1000;
-            benchmarkIncUpdateData.StateMap.Add(i, new OldItem
-            {
-                Int = n,
-                Flo = n,
-                Dou = n,
-                Str = n.ToString()
-            });
-        }
-
-        var cc = _db.GetCollection<NestOldItem>(nameof(NestOldItem));
-        var filter = Builders<NestOldItem>.Filter.Eq("_id", 1);
-        // var update = Builders<NestOldItem>.Update.Set(f => f, benchmarkIncUpdateData);
-        await cc.ReplaceOneAsync(filter, benchmarkIncUpdateData, new ReplaceOptions() { IsUpsert = true });
-    }
-
-
+    
     [Benchmark]
     public void BenchmarkIncUpdate增量更新()
     {
