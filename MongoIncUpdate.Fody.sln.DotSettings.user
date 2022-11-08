@@ -20,7 +20,7 @@
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f67a81e6_002D44a9_002D4bd6_002Dbcee_002Df22690b680f7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestBenchmarkIncUpdate" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests.TestBenchmarkIncUpdate&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DA8A294A-27CC-4EEC-88F7-9FE526E8022E::net6.0::MongoIncUpdate.Fody.Test.WeaverTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	

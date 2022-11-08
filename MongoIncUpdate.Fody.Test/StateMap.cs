@@ -103,6 +103,9 @@ public class StateMap<K, V> : Dictionary<K, V>, IDiffUpdateable where K : notnul
     #region 这些字段没什么用 仅仅为了编译过。
 
     BitArray IDiffUpdateable.Dirties { get; set; } = new(0);
+
+    bool IDiffUpdateable.IsOnceInitDone { get; set; } = true;
+
     Dictionary<int, IPropertyCallAdapter> IDiffUpdateable.IdxMapping { get; set; } = new();
     Dictionary<string, int> IDiffUpdateable.NameMapping { get; set; } = new();
 

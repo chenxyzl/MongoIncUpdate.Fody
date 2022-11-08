@@ -183,8 +183,8 @@ public partial class WeaverTests
         _output.WriteLine("---DirtyTest完成---");
     }
 
-    
-    // [Fact]
+
+    [Fact]
     async Task TestBenchmarkIncUpdate()
     {
         // await TestDirtyNestItem();

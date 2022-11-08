@@ -5,13 +5,14 @@ namespace MongoIncUpdate.Fody;
 
 public partial class ModuleWeaver
 {
-    public void InjectOverrideProperty(TypeDefinition typ, string propName)
+    public void InjectOverrideProperty(TypeDefinition typ, string propName, bool isStatic = false)
     {
         //找到基类Prop
         var baseProp = _typeSelector.SelectPropFromType(MongoIncUpdateInterface, $"{propName}");
         //创建field//字段
-        var fieldDef = new FieldDefinition($"_{propName.FirstCharToLowerCase()}", FieldAttributes.Private,
-            baseProp.PropertyType);
+        var fieldDef = new FieldDefinition($"_{propName.FirstCharToLowerCase()}",
+            isStatic ? FieldAttributes.Static | FieldAttributes.Private : FieldAttributes.Private, //
+            baseProp.PropertyType); 
         typ.Fields.Add(fieldDef);
 
         //插入getter
@@ -23,11 +24,19 @@ public partial class ModuleWeaver
             baseGetPropMethodDef.ReturnType);
         getPropMethodDef.Overrides.Add(baseGetPropMethodDef);
         // getPropMethodDef.CustomAttributes.Add(new CustomAttribute(CompilerGeneratedAttributeTypeReference));
-        getPropMethodDef.Body.Instructions.Append(
-            Instruction.Create(OpCodes.Ldarg_0),
-            Instruction.Create(OpCodes.Ldfld, fieldDef),
-            Instruction.Create(OpCodes.Ret)
-        );
+        var getterBodyIl = isStatic
+            ? new[]
+            {
+                Instruction.Create(OpCodes.Ldsfld, fieldDef),
+                Instruction.Create(OpCodes.Ret)
+            }
+            : new[]
+            {
+                Instruction.Create(OpCodes.Ldarg_0),
+                Instruction.Create(OpCodes.Ldfld, fieldDef),
+                Instruction.Create(OpCodes.Ret)
+            };
+        getPropMethodDef.Body.Instructions.Append(getterBodyIl);
         typ.Methods.Add(getPropMethodDef);
 
         //插入setter
@@ -42,12 +51,21 @@ public partial class ModuleWeaver
             setPropMethodDef.Parameters.Add(parameterDefinition);
 
         // setPropMethodDef.CustomAttributes.Add(new CustomAttribute(CompilerGeneratedAttributeTypeReference));
-        setPropMethodDef.Body.Instructions.Append(
-            Instruction.Create(OpCodes.Ldarg_0),
-            Instruction.Create(OpCodes.Ldarg_1),
-            Instruction.Create(OpCodes.Stfld, fieldDef),
-            Instruction.Create(OpCodes.Ret)
-        );
+        var setterBodyIl = isStatic
+            ? new[]
+            {
+                Instruction.Create(OpCodes.Ldarg_1),
+                Instruction.Create(OpCodes.Stsfld, fieldDef),
+                Instruction.Create(OpCodes.Ret)
+            }
+            : new[]
+            {
+                Instruction.Create(OpCodes.Ldarg_0),
+                Instruction.Create(OpCodes.Ldarg_1),
+                Instruction.Create(OpCodes.Stfld, fieldDef),
+                Instruction.Create(OpCodes.Ret)
+            };
+        setPropMethodDef.Body.Instructions.Append(setterBodyIl);
         typ.Methods.Add(setPropMethodDef);
 
         // _typeSelector.SelectMethodFromType(typ, "get_Prop");

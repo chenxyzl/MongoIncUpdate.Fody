@@ -12,28 +12,41 @@ public interface IDiffUpdateable
 {
     [BsonIgnore] protected BitArray Dirties { get; set; }
 
-    //todo 考虑实现为对象的静态成员变量
+    //是否初始化了
+    [BsonIgnore] protected bool IsOnceInitDone { get; set; }
+
+    //脏标记对应的getter
     [BsonIgnore] protected Dictionary<int, IPropertyCallAdapter> IdxMapping { get; set; }
 
-    [BsonIgnore]
-    //todo 考虑实现为对象的静态成员变量
-    protected Dictionary<string, int> NameMapping { get; set; }
+    //名字对应的藏标记idx
+    [BsonIgnore] protected Dictionary<string, int> NameMapping { get; set; }
 
     //fody调用 插入到实现类的构造函数中
     void Init()
     {
-        IdxMapping = new Dictionary<int, IPropertyCallAdapter>();
-        NameMapping = new Dictionary<string, int>();
-        //生成map
-        var props = GetType().GetProperties();
-        var idx = 0;
-        foreach (var prop in props)
+        if (!IsOnceInitDone)
         {
-            if (prop.GetCustomAttributes<BsonIdAttribute>(true).Any()) continue;
-            if (prop.GetCustomAttributes<BsonIgnoreAttribute>(true).Any()) continue;
-            IdxMapping[idx] = this.GetInstance(prop);
-            NameMapping[prop.Name] = idx;
-            idx++;
+            lock (this)
+            {
+                if (!IsOnceInitDone)
+                {
+                    IsOnceInitDone = true;
+
+                    IdxMapping = new Dictionary<int, IPropertyCallAdapter>();
+                    NameMapping = new Dictionary<string, int>();
+                    //生成map
+                    var props = GetType().GetProperties();
+                    var idx = 0;
+                    foreach (var prop in props)
+                    {
+                        if (prop.GetCustomAttributes<BsonIdAttribute>(true).Any()) continue;
+                        if (prop.GetCustomAttributes<BsonIgnoreAttribute>(true).Any()) continue;
+                        IdxMapping[idx] = this.GetInstance(prop);
+                        NameMapping[prop.Name] = idx;
+                        idx++;
+                    }
+                }
+            }
         }
 
         //重新设置大小

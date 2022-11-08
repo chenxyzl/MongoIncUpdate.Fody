@@ -110,7 +110,7 @@ public class IncUpdateBenchmark
         Random r;
         int stateMapCount = 100;
 
-        benchmarkIncUpdateData = new DirtyNestItem
+        benchmarkIncUpdateData = new DirtyNestItem 
         {
             Id = 1,
             Item = new DirtyItem { Int = 1, Str = "1", Flo = 1.0f, Dou = 1.0 },
@@ -166,7 +166,7 @@ public class IncUpdateBenchmark
 
 
     [Benchmark]
-    public void BenchmarkIncUpdate()
+    public void BenchmarkIncUpdate增量更新()
     {
         var n = _r.Next() % _stateMapCount;
         _benchmarkIncUpdateData.StateMap[n]!.Int = n;
@@ -185,9 +185,9 @@ public class IncUpdateBenchmark
         var filter = Builders<DirtyNestItem>.Filter.Eq("_id", 1);
         _cc.UpdateOne(filter, setter, new UpdateOptions { IsUpsert = true });
     }
-    
+
     [Benchmark]
-    public void BenchmarkTotalSave0()
+    public void BenchmarkTotalSave0使用update方式更新部分()
     {
         var n = _r.Next() % _stateMapCount;
         _oldOldData.StateMap[n]!.Int = n;
@@ -200,13 +200,13 @@ public class IncUpdateBenchmark
         var filter = Builders<NestOldItem>.Filter.Eq("_id", 1);
         var update = Builders<NestOldItem>.Update.Set(f => f.StateMap, _oldOldData.StateMap);
         _cc1.UpdateOne(filter, update, new UpdateOptions() { IsUpsert = true });
-    
+
         // var filter = Builders<NestOldItem>.Filter.Eq("_id", 1);
         // _cc1.ReplaceOne(filter, _oldOldData, new ReplaceOptions() { IsUpsert = true });
     }
 
     [Benchmark]
-    public void BenchmarkTotalSave1()
+    public void BenchmarkTotalSave1使用replace方式整体更新()
     {
         var n = _r.Next() % _stateMapCount;
         _oldOldData.StateMap[n]!.Int = n;
@@ -219,13 +219,13 @@ public class IncUpdateBenchmark
         // var filter = Builders<NestOldItem>.Filter.Eq("_id", 1);
         // var update = Builders<NestOldItem>.Update.Set(f => f.StateMap, _oldOldData.StateMap);
         // _cc1.UpdateOne(filter, update, new UpdateOptions() { IsUpsert = true });
-    
+
         var filter = Builders<NestOldItem>.Filter.Eq("_id", 1);
         _cc1.ReplaceOne(filter, _oldOldData, new ReplaceOptions() { IsUpsert = true });
     }
-    
+
     [Benchmark]
-    public void BenchmarkTotalSave2()
+    public void BenchmarkTotalSave2先序列化再存储()
     {
         var n = _r.Next() % _stateMapCount;
         _oldOldData.StateMap[n]!.Int = n;
@@ -238,13 +238,13 @@ public class IncUpdateBenchmark
         // var filter = Builders<NestOldItem>.Filter.Eq("_id", 1);
         // var update = Builders<NestOldItem>.Update.Set(f => f.StateMap, _oldOldData.StateMap);
         // _cc1.UpdateOne(filter, update, new UpdateOptions() { IsUpsert = true });
-    
+
         var filter1 = Builders<BsonDocument>.Filter.Eq("_id", 1);
         _cc2.ReplaceOne(filter1, _oldOldData.ToBsonDocument(), new ReplaceOptions() { IsUpsert = true });
     }
 
     [Benchmark]
-    public void BenchmarkTotalSave3()
+    public void BenchmarkTotalSave3跳过序列化只存储()
     {
         var filter = Builders<BsonDocument>.Filter.Eq("_id", 1);
         _cc2.ReplaceOne(filter, test2, new ReplaceOptions() { IsUpsert = true });

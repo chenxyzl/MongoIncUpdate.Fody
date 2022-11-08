@@ -68,9 +68,11 @@ public partial class ModuleWeaver : BaseModuleWeaver
             //脏标记
             InjectOverrideProperty(typ, "Dirties");
             //IdxMapping
-            InjectOverrideProperty(typ, "IdxMapping");
+            InjectOverrideProperty(typ, "IdxMapping", true);
             //NameMapping
-            InjectOverrideProperty(typ, "NameMapping");
+            InjectOverrideProperty(typ, "NameMapping", true);
+            //Init
+            InjectOverrideProperty(typ, "IsOnceInitDone", true);
 
             //注入属性变化监听
             InjectPropSetterPropChangeNotify(typ);
