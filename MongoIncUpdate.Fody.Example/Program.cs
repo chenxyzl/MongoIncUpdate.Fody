@@ -6,11 +6,23 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        Console.WriteLine("---TestBenchmarkIncUpdate---");
-        var v = BenchmarkRunner.Run<IncUpdateBenchmark>(); 
-        // var v = new IncUpdateBenchmark();
-        // v.BenchmarkIncUpdate();  
-        Console.WriteLine("---TestBenchmarkIncUpdate完成---"); 
-        Console.WriteLine(v); 
+        Benchmark(args);
+        Test(args);
+    }
+
+    public static void Benchmark(string[] args)
+    {
+        Console.WriteLine("---Benchmark---");
+        var v = BenchmarkRunner.Run<IncUpdateBenchmark>();
+        Console.WriteLine("---Benchmark完成---");
+        Console.WriteLine(v);
+    }
+
+    public static void Test(string[] args)
+    {
+        Console.WriteLine("---Test---");
+        var v = new IncUpdateBenchmark();
+        v.BenchmarkIncUpdate();
+        Console.WriteLine("---Test完成---");
     }
 }

@@ -25,7 +25,6 @@ public interface IDiffUpdateable
     void Init()
     {
         if (!IsOnceInitDone)
-        {
             lock (this)
             {
                 if (!IsOnceInitDone)
@@ -47,7 +46,6 @@ public interface IDiffUpdateable
                     }
                 }
             }
-        }
 
         //重新设置大小
         Dirties = new BitArray(IdxMapping.Count);

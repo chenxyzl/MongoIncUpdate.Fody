@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Fody;
+﻿using Fody;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 

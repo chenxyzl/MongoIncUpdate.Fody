@@ -8,7 +8,6 @@ using MongoDB.Driver;
 
 namespace MongoIncUpdate.Fody.Example;
 
-
 public class OldItem
 {
     public int Int { get; set; } //0
@@ -43,14 +42,15 @@ public class DirtyNestItem
 
     [BsonSerializer(typeof(StateMapSerializer<int, DirtyItem>))]
     public StateMap<int, DirtyItem> XItems { get; set; } //0
-    
-    public DirtyItem Item { get; set; } //1
 
+    public DirtyItem Item { get; set; } //1
 }
 
-[MemoryDiagnoser, RankColumn]
+[MemoryDiagnoser]
+[RankColumn]
 public class IncUpdateBenchmark
 {
+    private const int _stateMapCount = 1000;
     private static DirtyNestItem _benchmarkIncUpdateData;
     private static NestOldItem _oldOldData;
     private static IMongoDatabase _db;
@@ -59,7 +59,6 @@ public class IncUpdateBenchmark
     private static IMongoCollection<BsonDocument> _cc2;
     private static BsonDocument test2;
     private static Random _r;
-    private const int _stateMapCount = 1000;
 
     private static bool _init;
 
@@ -76,17 +75,17 @@ public class IncUpdateBenchmark
             _db = mongoClient.GetDatabase(new MongoUrlBuilder(connectionString).DatabaseName);
             _cc = _db.GetCollection<DirtyNestItem>(nameof(DirtyNestItem));
             _cc1 = _db.GetCollection<NestOldItem>(nameof(NestOldItem));
-            _cc2 = _db.GetCollection<BsonDocument>(("xxx"));
+            _cc2 = _db.GetCollection<BsonDocument>("xxx");
 
             //初始化数据
             _benchmarkIncUpdateData = new DirtyNestItem
             {
                 Id = 1,
                 Item = new DirtyItem { Int = 1, Str = "1", Flo = 1.0f, Dou = 1.0 },
-                XItems = new()
+                XItems = new StateMap<int, DirtyItem>()
             };
             _r = new Random();
-            for (int i = 0; i < _stateMapCount; i++)
+            for (var i = 0; i < _stateMapCount; i++)
             {
                 var n = _r.Next() % 1000;
                 _benchmarkIncUpdateData.XItems.Add(i, new DirtyItem
@@ -105,10 +104,10 @@ public class IncUpdateBenchmark
             {
                 Id = 1,
                 Item = new OldItem { Int = 1, Str = "1", Flo = 1.0f, Dou = 1.0 },
-                OItems = new()
+                OItems = new Dictionary<int, OldItem>()
             };
             _r = new Random();
-            for (int i = 0; i < _stateMapCount; i++)
+            for (var i = 0; i < _stateMapCount; i++)
             {
                 var n = _r.Next() % 1000;
                 _oldOldData.OItems.Add(i, new OldItem
@@ -121,7 +120,7 @@ public class IncUpdateBenchmark
             }
         }
     }
-    
+
     [Benchmark]
     public void BenchmarkIncUpdate()
     {
@@ -156,7 +155,7 @@ public class IncUpdateBenchmark
         //保存数据
         var filter = Builders<NestOldItem>.Filter.Eq("_id", 1);
         var update = Builders<NestOldItem>.Update.Set(f => f.OItems, _oldOldData.OItems);
-        _cc1.UpdateOne(filter, update, new UpdateOptions() { IsUpsert = true });
+        _cc1.UpdateOne(filter, update, new UpdateOptions { IsUpsert = true });
 
         // var filter = Builders<NestOldItem>.Filter.Eq("_id", 1);
         // _cc1.ReplaceOne(filter, _oldOldData, new ReplaceOptions() { IsUpsert = true });
@@ -178,7 +177,7 @@ public class IncUpdateBenchmark
         // _cc1.UpdateOne(filter, update, new UpdateOptions() { IsUpsert = true });
 
         var filter = Builders<NestOldItem>.Filter.Eq("_id", 1);
-        _cc1.ReplaceOne(filter, _oldOldData, new ReplaceOptions() { IsUpsert = true });
+        _cc1.ReplaceOne(filter, _oldOldData, new ReplaceOptions { IsUpsert = true });
     }
 
     [Benchmark]
@@ -197,13 +196,13 @@ public class IncUpdateBenchmark
         // _cc1.UpdateOne(filter, update, new UpdateOptions() { IsUpsert = true });
 
         var filter1 = Builders<BsonDocument>.Filter.Eq("_id", 1);
-        _cc2.ReplaceOne(filter1, _oldOldData.ToBsonDocument(), new ReplaceOptions() { IsUpsert = true });
+        _cc2.ReplaceOne(filter1, _oldOldData.ToBsonDocument(), new ReplaceOptions { IsUpsert = true });
     }
 
     [Benchmark]
     public void BenchmarkTotalSave3()
     {
         var filter = Builders<BsonDocument>.Filter.Eq("_id", 1);
-        _cc2.ReplaceOne(filter, test2, new ReplaceOptions() { IsUpsert = true });
+        _cc2.ReplaceOne(filter, test2, new ReplaceOptions { IsUpsert = true });
     }
 }

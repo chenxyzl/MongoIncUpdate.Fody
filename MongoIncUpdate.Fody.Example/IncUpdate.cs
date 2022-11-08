@@ -12,7 +12,7 @@ public static class IncUpdateExt
         foreach (var v in props)
         foreach (var attr in v.GetCustomAttributes(false))
             if (attr.GetType().FullName == find.FullName)
-                return v.GetValue(self);  
+                return v.GetValue(self);
         return null;
     }
 
@@ -23,7 +23,7 @@ public static class IncUpdateExt
         if (id == null) throw new Exception("BsonId not exist");
 
         var diffUpdateable = item as IDiffUpdateable;
-        var defs = new List<UpdateDefinition<T>>(); 
+        var defs = new List<UpdateDefinition<T>>();
         diffUpdateable?.BuildUpdate(defs, "");
         if (defs.Count == 0) return;
         var setter = Builders<T>.Update.Combine(defs);

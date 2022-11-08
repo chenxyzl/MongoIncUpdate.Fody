@@ -17,7 +17,6 @@ public class TypeSelector
             if (!CanVirtualize(typ))
                 throw new WeavingException($"{typ.Name} must only public seal class. [means: public seal class]");
         }
-            
     }
 
     public IEnumerable<TypeDefinition> Select(ModuleDefinition moduleDefinition)

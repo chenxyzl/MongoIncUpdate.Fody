@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using AssemblyToProcess;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
-using MongoIncUpdate.Fody.Example;
 
 namespace MongoIncUpdate.Fody.Example;
 
@@ -26,7 +25,6 @@ public interface IDiffUpdateable
     void Init()
     {
         if (!IsOnceInitDone)
-        {
             lock (this)
             {
                 if (!IsOnceInitDone)
@@ -44,11 +42,10 @@ public interface IDiffUpdateable
                         if (prop.GetCustomAttributes<BsonIgnoreAttribute>(true).Any()) continue;
                         IdxMapping[idx] = this.GetInstance(prop);
                         NameMapping[prop.Name] = idx;
-                        idx++; 
+                        idx++;
                     }
                 }
             }
-        }
 
         //重新设置大小
         Dirties = new BitArray(IdxMapping.Count);

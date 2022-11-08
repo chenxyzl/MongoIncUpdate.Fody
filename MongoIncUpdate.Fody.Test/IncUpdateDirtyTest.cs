@@ -1,11 +1,7 @@
 ﻿using System.Collections;
 using System.Reflection;
 using AssemblyToProcess;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Loggers;
-using BenchmarkDotNet.Running;
 using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Driver;
 using Xunit;
 
 namespace MongoIncUpdate.Fody.Test;
@@ -32,14 +28,14 @@ public class DirtyNestItem
 
 public partial class WeaverTests
 {
-    static BitArray? GetDirtiesFromObject(object a)
+    private static BitArray? GetDirtiesFromObject(object a)
     {
-        var filed = a.GetType().GetField("_dirties",BindingFlags.NonPublic | BindingFlags.Instance);
+        var filed = a.GetType().GetField("_dirties", BindingFlags.NonPublic | BindingFlags.Instance);
         var dirties = filed.GetValue(a) as BitArray;
         return dirties;
     }
 
-    static HashSet<K>? GetDirtySetFromObject<K, V>(StateMap<K, V> a) where K : notnull
+    private static HashSet<K>? GetDirtySetFromObject<K, V>(StateMap<K, V> a) where K : notnull
     {
         var filed = a.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
             .First(v => v.Name == "_dirtySet");
@@ -48,7 +44,7 @@ public partial class WeaverTests
     }
 
     [Fact]
-    void DirtyTest()
+    private void DirtyTest()
     {
         _output.WriteLine("---DirtyTest---");
         _output.WriteLine("全量赋值脏检查");
@@ -78,10 +74,8 @@ public partial class WeaverTests
         Assert.True(dirties != null);
         Assert.Equal(2, dirties.Count);
         for (var i = 0; i < dirties.Count; i++)
-        {
             if (i == 0) Assert.True(dirties.Get(i));
             else Assert.False(dirties.Get(i));
-        }
 
         //还原
         _output.WriteLine("a.CleanDirties检查");
@@ -90,15 +84,13 @@ public partial class WeaverTests
 
         _output.WriteLine("v.StateMap覆盖脏检查");
         a.StateMap = new StateMap<int, DirtyItem>
-            { { 2, new DirtyItem { Int = 2, Str = "2", Flo = 2.0f, Dou = 2.0, } } };
+            { { 2, new DirtyItem { Int = 2, Str = "2", Flo = 2.0f, Dou = 2.0 } } };
         dirties = GetDirtiesFromObject(a);
         Assert.True(dirties != null);
         Assert.Equal(2, dirties.Count);
         for (var i = 0; i < dirties.Count; i++)
-        {
             if (i == 1) Assert.True(dirties.Get(i));
             else Assert.False(dirties.Get(i));
-        }
 
         //还原
         _output.WriteLine("a.CleanDirties检查");

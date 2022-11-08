@@ -12,7 +12,7 @@ public partial class ModuleWeaver
         //创建field//字段
         var fieldDef = new FieldDefinition($"_{propName.FirstCharToLowerCase()}",
             isStatic ? FieldAttributes.Static | FieldAttributes.Private : FieldAttributes.Private, //
-            baseProp.PropertyType); 
+            baseProp.PropertyType);
         typ.Fields.Add(fieldDef);
 
         //插入getter
