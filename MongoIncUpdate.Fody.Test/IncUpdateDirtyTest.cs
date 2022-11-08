@@ -34,14 +34,12 @@ public partial class WeaverTests
 {
     static BitArray? GetDirtiesFromObject(object a)
     {
-        var props = a.GetType()
-            .GetProperties(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-            .First(v => v.Name == "MongoIncUpdate.Fody.Test.IDiffUpdateable.Dirties");
-        var dirties = props.GetValue(a) as BitArray;
+        var filed = a.GetType().GetField("_dirties",BindingFlags.NonPublic | BindingFlags.Instance);
+        var dirties = filed.GetValue(a) as BitArray;
         return dirties;
     }
 
-    static HashSet<K>? GetDirtySetFromObject<K, V>(StateMap<K, V> a)
+    static HashSet<K>? GetDirtySetFromObject<K, V>(StateMap<K, V> a) where K : notnull
     {
         var filed = a.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
             .First(v => v.Name == "_dirtySet");
@@ -181,25 +179,5 @@ public partial class WeaverTests
         for (var i = 0; i < dirties.Count; i++) Assert.False(dirties.Get(i));
 
         _output.WriteLine("---DirtyTest完成---");
-    }
-
-
-    // this will begin benchmark and cost long time
-    // [Fact]
-    async Task TestBenchmarkIncUpdate()
-    {
-        // await TestDirtyNestItem();
-        // await TestOldNestItem();
-        var logger = new AccumulationLogger();
-
-        var config = ManualConfig.Create(DefaultConfig.Instance)
-            .AddLogger(logger)
-            .WithOptions(ConfigOptions.DisableOptimizationsValidator);
-
-        _output.WriteLine("---TestBenchmarkIncUpdate---");
-        var v = BenchmarkRunner.Run<IncUpdateBenchmark>(config);
-        _output.WriteLine("---TestBenchmarkIncUpdate完成---");
-        _output.WriteLine(logger.GetLog());
-        ;
     }
 }

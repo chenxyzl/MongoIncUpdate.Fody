@@ -121,7 +121,7 @@ public static class CecilExtensions
         return attributes.Where(attribute => attribute.Constructor.DeclaringType.FullName == attributeName);
     }
 
-    public static CustomAttribute GetAttribute(this IEnumerable<CustomAttribute> attributes, string attributeName)
+    public static CustomAttribute? GetAttribute(this IEnumerable<CustomAttribute> attributes, string attributeName)
     {
         return attributes.FirstOrDefault(attribute => attribute.Constructor.DeclaringType.FullName == attributeName);
     }
@@ -131,7 +131,7 @@ public static class CecilExtensions
         return attributes.Any(attribute => attribute.Constructor.DeclaringType.FullName == attributeName);
     }
 
-    public static IEnumerable<TypeReference> GetAllInterfaces(this TypeDefinition type)
+    public static IEnumerable<TypeReference> GetAllInterfaces(this TypeDefinition? type)
     {
         while (type != null)
         {

@@ -16,7 +16,7 @@ public partial class ModuleWeaver
         var bitArrayTypeDefinition = FindTypeDefinition("System.Collections.BitArray");
         BitArrayTypeDefReference = ModuleDefinition.ImportReference(bitArrayTypeDefinition);
 
-        CompilerGeneratedAttributeTypeReference = ModuleDefinition.Import(
+        CompilerGeneratedAttributeTypeReference = ModuleDefinition.ImportReference(
             typeof(CompilerGeneratedAttribute).GetConstructor(Type.EmptyTypes));
 
         //Mongo

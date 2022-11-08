@@ -42,11 +42,6 @@ public partial class ModuleWeaver : BaseModuleWeaver
         //合法性检查
         _typeSelector.CheckTypeLegal(selectedTypes);
 
-        // _memberVirtualizer.Virtualize(selectedMembers);
-        // _callMapper.MapCallsToVirtual(selectedMembers, ModuleDefinition);
-
-        // var baseDirtiesMethod = _typeSelector.SelectMethodFromType(MongoIncUpdateInterface, "Dirties");
-
         foreach (var typ in selectedTypes)
         {
             //继承这个接口
@@ -65,22 +60,20 @@ public partial class ModuleWeaver : BaseModuleWeaver
                     Instruction.Create(OpCodes.Nop));
             }
 
+            //一定要先做
+            //注入属性变化监听（警告:一定不要调换顺序,一定要先注入监听,因为这里有属性遍历,避免属性被后面污染了）
+            InjectPropSetterPropChangeNotify(typ);
+
+            //再后做------因为注入属性会影响前面的注入监听
             //脏标记
             InjectOverrideProperty(typ, "Dirties");
-            //IdxMapping
-            InjectOverrideProperty(typ, "IdxMapping", true);
-            //NameMapping
-            InjectOverrideProperty(typ, "NameMapping", true);
             //Init
             InjectOverrideProperty(typ, "IsOnceInitDone", true);
-
-            //注入属性变化监听
-            InjectPropSetterPropChangeNotify(typ);
+            //NameMapping
+            InjectOverrideProperty(typ, "NameMapping", true);
+            //IdxMapping
+            InjectOverrideProperty(typ, "IdxMapping", true);
         }
-
-        //获取所有符合条件的类
-        //先处理继承 1继承,2属性实现
-        //处理属性 1.获取需要监听setter的属性,2.调用继承的方法Dirties[idx]=true;
     }
 
     public override IEnumerable<string> GetAssembliesForScanning()

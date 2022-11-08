@@ -70,29 +70,10 @@ public partial class ModuleWeaver
 
         // _typeSelector.SelectMethodFromType(typ, "get_Prop");
 
-        //插入重写
         //Prop重载
         var prop = new PropertyDefinition($"{MongoIncUpdateInterface}.{baseProp.Name}",
             baseProp.Attributes,
-            baseProp.PropertyType);
-        prop.GetMethod = BuildGetMethodDefinitionFromBase(
-            $"{MongoIncUpdateInterface}.{baseProp.GetMethod.Name}",
-            typ,
-            baseProp.GetMethod);
-        prop.GetMethod.Body = new MethodBody(prop.GetMethod);
-        prop.GetMethod.Body.GetILProcessor().Append(Instruction.Create(OpCodes.Ldarg_0));
-        prop.GetMethod.Body.GetILProcessor().Append(Instruction.Create(OpCodes.Ldfld, fieldDef));
-        prop.GetMethod.Body.GetILProcessor().Append(Instruction.Create(OpCodes.Ret));
-
-        prop.SetMethod = BuildGetMethodDefinitionFromBase(
-            $"{MongoIncUpdateInterface}.{baseProp.SetMethod.Name}",
-            typ,
-            baseProp.SetMethod);
-        prop.SetMethod.Body = new MethodBody(prop.SetMethod);
-        prop.SetMethod.Body.GetILProcessor().Append(Instruction.Create(OpCodes.Ldarg_0));
-        prop.SetMethod.Body.GetILProcessor().Append(Instruction.Create(OpCodes.Ldarg_1));
-        prop.SetMethod.Body.GetILProcessor().Append(Instruction.Create(OpCodes.Stfld, fieldDef));
-        prop.SetMethod.Body.GetILProcessor().Append(Instruction.Create(OpCodes.Ret));
+            typ);
         typ.Properties.Add(prop);
     }
 }

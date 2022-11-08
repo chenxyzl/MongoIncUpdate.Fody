@@ -1,15 +1,13 @@
-﻿using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Loggers;
-using BenchmarkDotNet.Running;
+﻿using AssemblyToProcess;
+using BenchmarkDotNet.Attributes;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.Options;
 using MongoDB.Driver;
-using Xunit;
-using Xunit.Abstractions;
 
-namespace MongoIncUpdate.Fody.Test;
+namespace MongoIncUpdate.Fody.Example;
+
 
 public class OldItem
 {
@@ -26,7 +24,28 @@ public class NestOldItem
     public OldItem Item { get; set; } //0
 
     [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfDocuments)]
-    public Dictionary<int, OldItem> StateMap { get; set; } //1
+    public Dictionary<int, OldItem> OItems { get; set; } //1
+}
+
+[MongoIncUpdate]
+public class DirtyItem
+{
+    public int Int { get; set; } //0
+    public float Flo { get; set; } //1
+    public double? Dou { get; set; } //2 
+    public string? Str { get; set; } //3
+}
+
+[MongoIncUpdate]
+public class DirtyNestItem
+{
+    [BsonId] public int Id { get; set; }
+
+    [BsonSerializer(typeof(StateMapSerializer<int, DirtyItem>))]
+    public StateMap<int, DirtyItem> XItems { get; set; } //0
+    
+    public DirtyItem Item { get; set; } //1
+
 }
 
 [MemoryDiagnoser, RankColumn]
@@ -35,7 +54,6 @@ public class IncUpdateBenchmark
     private static DirtyNestItem _benchmarkIncUpdateData;
     private static NestOldItem _oldOldData;
     private static IMongoDatabase _db;
-    private static ITestOutputHelper _output;
     private static IMongoCollection<DirtyNestItem> _cc;
     private static IMongoCollection<NestOldItem> _cc1;
     private static IMongoCollection<BsonDocument> _cc2;
@@ -51,6 +69,7 @@ public class IncUpdateBenchmark
         {
             if (_init) return;
             _init = true;
+            BsonSerializer.RegisterGenericSerializerDefinition(typeof(StateMap<,>), typeof(StateMapSerializer<,>));
             //创建mongo链接
             var connectionString = "mongodb://admin:123456@127.0.0.1:27017/test?authSource=admin";
             var mongoClient = new MongoClient(connectionString);
@@ -64,13 +83,13 @@ public class IncUpdateBenchmark
             {
                 Id = 1,
                 Item = new DirtyItem { Int = 1, Str = "1", Flo = 1.0f, Dou = 1.0 },
-                StateMap = new()
+                XItems = new()
             };
             _r = new Random();
             for (int i = 0; i < _stateMapCount; i++)
             {
                 var n = _r.Next() % 1000;
-                _benchmarkIncUpdateData.StateMap.Add(i, new DirtyItem
+                _benchmarkIncUpdateData.XItems.Add(i, new DirtyItem
                 {
                     Int = n,
                     Flo = n,
@@ -86,13 +105,13 @@ public class IncUpdateBenchmark
             {
                 Id = 1,
                 Item = new OldItem { Int = 1, Str = "1", Flo = 1.0f, Dou = 1.0 },
-                StateMap = new()
+                OItems = new()
             };
             _r = new Random();
             for (int i = 0; i < _stateMapCount; i++)
             {
                 var n = _r.Next() % 1000;
-                _oldOldData.StateMap.Add(i, new OldItem
+                _oldOldData.OItems.Add(i, new OldItem
                 {
                     Int = n,
                     Flo = n,
@@ -104,13 +123,13 @@ public class IncUpdateBenchmark
     }
     
     [Benchmark]
-    public void BenchmarkIncUpdate增量更新()
+    public void BenchmarkIncUpdate()
     {
         var n = _r.Next() % _stateMapCount;
-        _benchmarkIncUpdateData.StateMap[n]!.Int = n;
-        _benchmarkIncUpdateData.StateMap[n]!.Flo = n;
-        _benchmarkIncUpdateData.StateMap[n]!.Dou = n;
-        _benchmarkIncUpdateData.StateMap[n]!.Str = n.ToString();
+        _benchmarkIncUpdateData.XItems[n]!.Int = n;
+        _benchmarkIncUpdateData.XItems[n]!.Flo = n;
+        _benchmarkIncUpdateData.XItems[n]!.Dou = n;
+        _benchmarkIncUpdateData.XItems[n]!.Str = n.ToString();
         _benchmarkIncUpdateData.Item.Int = n;
         _benchmarkIncUpdateData.Item.Str = n.ToString();
 
@@ -125,18 +144,18 @@ public class IncUpdateBenchmark
     }
 
     [Benchmark]
-    public void BenchmarkTotalSave0使用update方式更新部分()
+    public void BenchmarkTotalSave0()
     {
         var n = _r.Next() % _stateMapCount;
-        _oldOldData.StateMap[n]!.Int = n;
-        _oldOldData.StateMap[n]!.Flo = n;
-        _oldOldData.StateMap[n]!.Dou = n;
-        _oldOldData.StateMap[n]!.Str = n.ToString();
+        _oldOldData.OItems[n]!.Int = n;
+        _oldOldData.OItems[n]!.Flo = n;
+        _oldOldData.OItems[n]!.Dou = n;
+        _oldOldData.OItems[n]!.Str = n.ToString();
         _oldOldData.Item.Int = n;
         _oldOldData.Item.Str = n.ToString();
         //保存数据
         var filter = Builders<NestOldItem>.Filter.Eq("_id", 1);
-        var update = Builders<NestOldItem>.Update.Set(f => f.StateMap, _oldOldData.StateMap);
+        var update = Builders<NestOldItem>.Update.Set(f => f.OItems, _oldOldData.OItems);
         _cc1.UpdateOne(filter, update, new UpdateOptions() { IsUpsert = true });
 
         // var filter = Builders<NestOldItem>.Filter.Eq("_id", 1);
@@ -144,13 +163,13 @@ public class IncUpdateBenchmark
     }
 
     [Benchmark]
-    public void BenchmarkTotalSave1使用replace方式整体更新()
+    public void BenchmarkTotalSave1()
     {
         var n = _r.Next() % _stateMapCount;
-        _oldOldData.StateMap[n]!.Int = n;
-        _oldOldData.StateMap[n]!.Flo = n;
-        _oldOldData.StateMap[n]!.Dou = n;
-        _oldOldData.StateMap[n]!.Str = n.ToString();
+        _oldOldData.OItems[n]!.Int = n;
+        _oldOldData.OItems[n]!.Flo = n;
+        _oldOldData.OItems[n]!.Dou = n;
+        _oldOldData.OItems[n]!.Str = n.ToString();
         _oldOldData.Item.Int = n;
         _oldOldData.Item.Str = n.ToString();
         //保存数据
@@ -163,13 +182,13 @@ public class IncUpdateBenchmark
     }
 
     [Benchmark]
-    public void BenchmarkTotalSave2先序列化再存储()
+    public void BenchmarkTotalSave2()
     {
         var n = _r.Next() % _stateMapCount;
-        _oldOldData.StateMap[n]!.Int = n;
-        _oldOldData.StateMap[n]!.Flo = n;
-        _oldOldData.StateMap[n]!.Dou = n;
-        _oldOldData.StateMap[n]!.Str = n.ToString();
+        _oldOldData.OItems[n]!.Int = n;
+        _oldOldData.OItems[n]!.Flo = n;
+        _oldOldData.OItems[n]!.Dou = n;
+        _oldOldData.OItems[n]!.Str = n.ToString();
         _oldOldData.Item.Int = n;
         _oldOldData.Item.Str = n.ToString();
         //保存数据
@@ -182,7 +201,7 @@ public class IncUpdateBenchmark
     }
 
     [Benchmark]
-    public void BenchmarkTotalSave3跳过序列化只存储()
+    public void BenchmarkTotalSave3()
     {
         var filter = Builders<BsonDocument>.Filter.Eq("_id", 1);
         _cc2.ReplaceOne(filter, test2, new ReplaceOptions() { IsUpsert = true });
