@@ -95,3 +95,6 @@ public static async Task SaveIm(this Item self, IMongoCollection<Item> collectio
         Console.WriteLine($"update data count:{defs.Count}");
     }
 ```
+
+## 性能测试
+Benchmark.md[链接](./Benchmark.md)
