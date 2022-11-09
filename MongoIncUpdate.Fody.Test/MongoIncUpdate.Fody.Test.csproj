@@ -17,8 +17,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <WeaverFiles Include="$(MsBuildThisFileDirectory)..\MongoIncUpdate.Fody\bin\Debug\net6.0\MongoIncUpdate.Fody.dll" />
-        <WeaverFiles Include="$(MsBuildThisFileDirectory)..\MongoIncUpdate.Fody\bin\Debug\net6.0\MongoIncUpdate.Fody.pdb" />
+        <WeaverFiles Include="$(SolutionDir)MongoIncUpdate.Fody\bin\$(Configuration)\net6.0\MongoIncUpdate.Fody.dll" />
+        <WeaverFiles Include="$(SolutionDir)MongoIncUpdate.Fody\bin\$(Configuration)\net6.0\MongoIncUpdate.Fody.pdb" />
     </ItemGroup>
 
     <ItemGroup>
