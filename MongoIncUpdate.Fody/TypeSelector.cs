@@ -34,31 +34,15 @@ public class TypeSelector
         var ns = "MongoIncUpdate.Base";
         var idu = "IDiffUpdateable";
         var mongoIncUpdate = moduleDefinition.FindAssembly(ns) ??
-                             throw new ArgumentNullException($"\"{ns}\" must import in {moduleDefinition.Name}");
+                             throw new WeavingException($"\"{ns}\" must import in {moduleDefinition.Name}");
 
         var mongoIncUpdateInterface =
             moduleDefinition.FindType(ns, idu, mongoIncUpdate) ??
-            throw new ArgumentNullException($"\"{ns}.{idu}\" must not null");
+            throw new WeavingException($"\"{ns}.{idu}\" must not null");
 
         var v = moduleDefinition.ImportReference(mongoIncUpdateInterface);
         if (v == null) throw new WeavingException($"\"{ns}.{idu}\" import err");
         return v;
-
-        //方法一
-        // var v = moduleDefinition.ImportReference(typeof(IDiffUpdateable));
-        // if (v == null) throw new WeavingException("IDiffUpdateable not found");
-        // return v;
-
-        //方法二
-        // var typesToProcess = new List<TypeReference>();
-        // foreach (var type in moduleDefinition.GetTypes())
-        //     if (HasMongoIncUpdateInterfaceAttribute(type) && type.IsInterface)
-        //         typesToProcess.Add(type);
-        // if (typesToProcess.Count < 1) throw new WeavingException("MongoIncUpdateInterfaceAttribute must exist");
-        //
-        // if (typesToProcess.Count > 1)
-        //     throw new WeavingException($"MongoIncUpdateInterfaceAttribute must only one; now:{typesToProcess.Count}");
-        // return typesToProcess[0];
     }
 
     public MethodReference SelectMethodFromType(ModuleDefinition moduleDefinition, TypeReference typeReference,
