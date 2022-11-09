@@ -1,4 +1,4 @@
-﻿namespace AssemblyToProcess;
+﻿namespace MongoIncUpdate.Base;
 
 [AttributeUsage(AttributeTargets.Interface)]
 public class MongoIncUpdateInterfaceAttribute : Attribute

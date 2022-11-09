@@ -171,4 +171,21 @@ public static class CecilExtensions
             instructions.Add(Instruction.Create(OpCodes.Box, genericType));
         }
     }
+    
+    public static AssemblyNameReference? FindAssembly(this ModuleDefinition module, string name)
+    {
+        return module.AssemblyReferences.Where(x => x.Name == name).MaxBy(x => x.Version);
+    }
+
+    public static TypeReference FindType(this ModuleDefinition currentModule, string @namespace, string typeName,
+        IMetadataScope? scope = null, params string[] typeParameters)
+    {
+        var result = new TypeReference(@namespace, typeName, currentModule, scope);
+        foreach (var typeParameter in typeParameters)
+        {
+            result.GenericParameters.Add(new GenericParameter(typeParameter, result));
+        }
+
+        return currentModule.ImportReference(result);
+    }
 }

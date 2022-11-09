@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoIncUpdate.Fody", "MongoIncUpdate.Fody\MongoIncUpdate.Fody.csproj", "{CCA5A0E1-522D-42F9-B957-B88CB813477A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyToProcess", "AssemblyToProcess\AssemblyToProcess.csproj", "{CE6507D7-AB12-4220-AB99-B116503F484D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoIncUpdate.Base", "MongoIncUpdate.Base\MongoIncUpdate.Base.csproj", "{CE6507D7-AB12-4220-AB99-B116503F484D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoIncUpdate.Fody.Test", "MongoIncUpdate.Fody.Test\MongoIncUpdate.Fody.Test.csproj", "{DA8A294A-27CC-4EEC-88F7-9FE526E8022E}"
 EndProject

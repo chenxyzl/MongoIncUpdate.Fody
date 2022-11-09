@@ -3,7 +3,7 @@ using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 
-namespace MongoIncUpdate.Fody.Example;
+namespace MongoIncUpdate.Base;
 
 //MongoKeyParse 负责key值的转换
 public static class MongoKeyParse

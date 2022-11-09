@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 
-namespace MongoIncUpdate.Fody.Example;
+namespace MongoIncUpdate.Base;
 
 public static class IncUpdateExt
 {

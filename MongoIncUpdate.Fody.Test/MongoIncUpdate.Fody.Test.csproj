@@ -22,7 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AssemblyToProcess\AssemblyToProcess.csproj" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
         <PackageReference Include="mongocsharpdriver" Version="2.18.0" />
         <PackageReference Include="MongoDB.Bson" Version="2.18.0" />
@@ -32,6 +31,10 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0-preview-20221003-04" />
         <PackageReference Include="xunit" Version="2.4.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MongoIncUpdate.Base\MongoIncUpdate.Base.csproj" />
     </ItemGroup>
 
 </Project>

@@ -7,7 +7,7 @@ public partial class ModuleWeaver
 {
     public void InjectPropSetterPropChangeNotify(TypeDefinition type)
     {
-        var propChangeMethod = _typeSelector.SelectMethodFromType(MongoIncUpdateInterface, "PropChange");
+        var propChangeMethod = _typeSelector.SelectMethodFromType(ModuleDefinition, MongoIncUpdateInterface, "PropChange");
         foreach (var prop in type.Properties)
         {
             var setter = prop.SetMethod;

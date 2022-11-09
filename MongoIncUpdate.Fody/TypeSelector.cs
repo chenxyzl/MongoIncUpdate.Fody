@@ -31,19 +31,38 @@ public class TypeSelector
 
     public TypeReference SelectMongoIncUpdateInterface(ModuleDefinition moduleDefinition)
     {
-        var typesToProcess = new List<TypeReference>();
-        foreach (var type in moduleDefinition.GetTypes())
-            if (HasMongoIncUpdateInterfaceAttribute(type) && type.IsInterface)
-                typesToProcess.Add(type);
-        if (typesToProcess.Count < 1) throw new WeavingException("MongoIncUpdateInterfaceAttribute must exist");
+        var ns = "MongoIncUpdate.Base";
+        var idu = "IDiffUpdateable";
+        var mongoIncUpdate = moduleDefinition.FindAssembly(ns) ??
+                             throw new ArgumentNullException($"\"{ns}\" must import in {moduleDefinition.Name}");
 
-        if (typesToProcess.Count > 1)
-            throw new WeavingException($"MongoIncUpdateInterfaceAttribute must only one; now:{typesToProcess.Count}");
+        var mongoIncUpdateInterface =
+            moduleDefinition.FindType(ns, idu, mongoIncUpdate) ??
+            throw new ArgumentNullException($"\"{ns}.{idu}\" must not null");
 
-        return typesToProcess[0];
+        var v = moduleDefinition.ImportReference(mongoIncUpdateInterface);
+        if (v == null) throw new WeavingException($"\"{ns}.{idu}\" import err");
+        return v;
+
+        //方法一
+        // var v = moduleDefinition.ImportReference(typeof(IDiffUpdateable));
+        // if (v == null) throw new WeavingException("IDiffUpdateable not found");
+        // return v;
+
+        //方法二
+        // var typesToProcess = new List<TypeReference>();
+        // foreach (var type in moduleDefinition.GetTypes())
+        //     if (HasMongoIncUpdateInterfaceAttribute(type) && type.IsInterface)
+        //         typesToProcess.Add(type);
+        // if (typesToProcess.Count < 1) throw new WeavingException("MongoIncUpdateInterfaceAttribute must exist");
+        //
+        // if (typesToProcess.Count > 1)
+        //     throw new WeavingException($"MongoIncUpdateInterfaceAttribute must only one; now:{typesToProcess.Count}");
+        // return typesToProcess[0];
     }
 
-    public MethodDefinition SelectMethodFromType(TypeReference typeReference, string methodName)
+    public MethodReference SelectMethodFromType(ModuleDefinition moduleDefinition, TypeReference typeReference,
+        string methodName)
     {
         var methodsToProcess = new List<MethodDefinition>();
         foreach (var type in typeReference.Resolve().GetMethods())
@@ -56,7 +75,7 @@ public class TypeSelector
             throw new WeavingException(
                 $"SelectMethodFromType ${typeReference.Name}:{methodName} must only one; now:{methodsToProcess.Count}");
 
-        return methodsToProcess[0];
+        return moduleDefinition.ImportReference(methodsToProcess[0]);
     }
 
     public PropertyDefinition SelectPropFromType(TypeReference typeReference, string propName)

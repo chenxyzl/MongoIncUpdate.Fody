@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace MongoIncUpdate.Fody.Example;
+namespace MongoIncUpdate.Base;
 
 public interface IPropertyCallAdapter
 {

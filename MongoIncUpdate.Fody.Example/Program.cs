@@ -6,8 +6,8 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        // Benchmark(args);
-        Test(args);
+        Benchmark(args);
+        // Test(args);
     }
 
     //需要性能测试就在Main里面打开

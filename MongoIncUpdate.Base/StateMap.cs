@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using MongoDB.Driver;
 
-namespace MongoIncUpdate.Fody.Test;
+namespace MongoIncUpdate.Base;
 
 public class StateMap<K, V> : Dictionary<K, V>, IDiffUpdateable where K : notnull
 {

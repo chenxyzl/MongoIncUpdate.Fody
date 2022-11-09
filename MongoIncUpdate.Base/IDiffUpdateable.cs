@@ -1,11 +1,10 @@
 ﻿using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using AssemblyToProcess;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 
-namespace MongoIncUpdate.Fody.Example;
+namespace MongoIncUpdate.Base;
 
 [MongoIncUpdateInterface]
 public interface IDiffUpdateable
@@ -15,10 +14,10 @@ public interface IDiffUpdateable
     //是否初始化了
     [BsonIgnore] protected bool IsOnceInitDone { get; set; }
 
-    //名字对应的藏标记idx
+    //脏标记对应的getter
     [BsonIgnore] protected Dictionary<string, int> NameMapping { get; set; }
 
-    //脏标记对应的getter
+    //名字对应的藏标记idx
     [BsonIgnore] protected Dictionary<int, IPropertyCallAdapter> IdxMapping { get; set; }
 
     //fody调用 插入到实现类的构造函数中

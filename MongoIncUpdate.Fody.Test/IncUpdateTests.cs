@@ -1,7 +1,7 @@
-﻿using AssemblyToProcess;
-using MongoDB.Bson.Serialization;
+﻿using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
+using MongoIncUpdate.Base;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -102,7 +102,12 @@ public partial class WeaverTests
         }
     }
 
-
+    [Fact]
+    public void TestHello()
+    {
+        var a = new ItemInt { Id = 1, I = 2 };
+        _output.WriteLine(a.ToString());
+    }
     //测试int更新
     [Fact]
     public async Task TestSampleInt()
