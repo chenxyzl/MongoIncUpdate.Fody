@@ -13,7 +13,11 @@ public class TypeSelector
             if (!IsContainer(typ))
                 throw new WeavingException($"{typ.Name} member must only property. [means:method only getter/setter");
             if (HasPublicFiled(typ))
-                throw new WeavingException($"{typ.Name} member must only property. [means: no public filed]");
+            {
+                var v = typ.Fields.Where(v => v.IsPublic).Select(v => v.Name).ToList();
+                throw new WeavingException(
+                    $"{typ.Name} member must only property. [means: no public filed:{v[0]}]");
+            }
             if (!CanVirtualize(typ))
                 throw new WeavingException($"{typ.Name} must only public seal class. [means: public seal class]");
         }
