@@ -21,7 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AssemblyToProcess\AssemblyToProcess.csproj" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
         <PackageReference Include="mongocsharpdriver" Version="2.18.0" />
         <PackageReference Include="MongoDB.Bson" Version="2.18.0" />
