@@ -9,26 +9,29 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BenchmarkDotNet" Version="0.13.2"/>
-        <PackageReference Include="Fody" Version="6.6.3"/>
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
+        <PackageReference Include="Fody" Version="6.6.4">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-        <WeaverFiles Include="$(MsBuildThisFileDirectory)..\MongoIncUpdate.Fody\bin\Debug\net6.0\MongoIncUpdate.Fody.dll"/>
-        <WeaverFiles Include="$(MsBuildThisFileDirectory)..\MongoIncUpdate.Fody\bin\Debug\net6.0\MongoIncUpdate.Fody.pdb"/>
+        <WeaverFiles Include="$(MsBuildThisFileDirectory)..\MongoIncUpdate.Fody\bin\Debug\net6.0\MongoIncUpdate.Fody.dll" />
+        <WeaverFiles Include="$(MsBuildThisFileDirectory)..\MongoIncUpdate.Fody\bin\Debug\net6.0\MongoIncUpdate.Fody.pdb" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AssemblyToProcess\AssemblyToProcess.csproj"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0-rc.1.22426.10"/>
-        <PackageReference Include="mongocsharpdriver" Version="2.17.1"/>
-        <PackageReference Include="MongoDB.Bson" Version="2.17.1"/>
-        <PackageReference Include="MongoDB.Driver" Version="2.17.1"/>
+        <ProjectReference Include="..\AssemblyToProcess\AssemblyToProcess.csproj" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+        <PackageReference Include="mongocsharpdriver" Version="2.18.0" />
+        <PackageReference Include="MongoDB.Bson" Version="2.18.0" />
+        <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2"/>
-        <PackageReference Include="xunit" Version="2.4.2"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0-preview-20221003-04" />
+        <PackageReference Include="xunit" Version="2.4.2" />
     </ItemGroup>
 
 </Project>

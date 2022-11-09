@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AssemblyToProcess\AssemblyToProcess.csproj"/>
+        <ProjectReference Include="..\AssemblyToProcess\AssemblyToProcess.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FodyHelpers" Version="6.6.3"/>
+        <PackageReference Include="FodyHelpers" Version="6.6.4" />
     </ItemGroup>
 
 </Project>
