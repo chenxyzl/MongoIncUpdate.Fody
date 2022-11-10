@@ -109,6 +109,7 @@ public partial class WeaverTests
         var a = new ItemInt { Id = 1, I = 2 };
         _output.WriteLine(a.ToString());
     }
+
     //测试int更新
     [Fact]
     public async Task TestSampleInt()
@@ -118,8 +119,7 @@ public partial class WeaverTests
         _output.WriteLine("全量写入");
         var cc = _db.GetCollection<ItemInt>(nameof(ItemInt));
         var a = new ItemInt { Id = 1, I = 2 };
-        await cc.IncUpdate(a);
-
+        _ = await cc.IncUpdate(a, 1);
         _output.WriteLine("全量写入检查");
         var filer = Builders<ItemInt>.Filter.Eq(x => x.Id, a.Id);
         var result = (await cc.FindAsync(filer)).First();
