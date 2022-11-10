@@ -119,7 +119,7 @@ public partial class WeaverTests
         _output.WriteLine("全量写入");
         var cc = _db.GetCollection<ItemInt>(nameof(ItemInt));
         var a = new ItemInt { Id = 1, I = 2 };
-        _ = await cc.IncUpdate(a, 1);
+        _ = await cc.IncUpdate(a, 1, true);
         _output.WriteLine("全量写入检查");
         var filer = Builders<ItemInt>.Filter.Eq(x => x.Id, a.Id);
         var result = (await cc.FindAsync(filer)).First();
