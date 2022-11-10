@@ -50,7 +50,8 @@ public static class IncUpdateExt
             //更新
             var setter = Builders<T>.Update.Combine(defs);
             // Console.WriteLine($"update data count:{defs.Count}");
-            return await collection.UpdateOneAsync(filter, setter, UpdateOptions);
+            var result = await collection.UpdateOneAsync(filter, setter, UpdateOptions);
+            return result;
         }
         catch (Exception) //增量更新失败则退化为全量替换(逻辑上没上用,增量异常了全量替换也大概率一场--仅仅是为了保证逻辑完整--)
         {

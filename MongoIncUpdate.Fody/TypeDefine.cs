@@ -5,11 +5,11 @@ namespace MongoIncUpdate.Fody;
 
 public partial class ModuleWeaver
 {
-    public TypeReference MongoIncUpdateInterface;
+    private TypeReference _mongoIncUpdateInterface;
 
-    public void FindCoreReferences()
+    private void FindCoreReferences()
     {
         //Mongo
-        MongoIncUpdateInterface = _typeSelector.SelectMongoIncUpdateInterface(ModuleDefinition);
+        _mongoIncUpdateInterface = _typeSelector.SelectMongoIncUpdateInterface(ModuleDefinition);
     }
 }

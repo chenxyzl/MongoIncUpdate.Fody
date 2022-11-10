@@ -9,7 +9,7 @@ using Xunit;
 namespace MongoIncUpdate.Fody.Test;
 
 [MongoIncUpdate]
-public class DirtyItem
+public sealed class DirtyItem
 {
     public int Int { get; set; } //0
     public float Flo { get; set; } //1
@@ -18,7 +18,7 @@ public class DirtyItem
 }
 
 [MongoIncUpdate]
-public class DirtyNestItem
+public sealed class DirtyNestItem
 {
     [BsonId] public int Id { get; set; }
 
@@ -56,7 +56,7 @@ public partial class WeaverTests
             StateMap = new StateMap<int, DirtyItem>
                 { { 2, new DirtyItem { Int = 2, Str = "2", Flo = 2.0f, Dou = 2.0 } } }
         };
-        var b = (IDiffUpdateable)a;
+        var b = (IDiffUpdateable)((object)a);
         Assert.NotNull(b);
 
         _output.WriteLine("全量写入结果检查");

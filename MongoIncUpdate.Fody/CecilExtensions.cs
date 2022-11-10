@@ -6,51 +6,23 @@ namespace MongoIncUpdate.Fody;
 
 public static class CecilExtensions
 {
-    public static string GetName(this PropertyDefinition propertyDefinition)
+    public static AssemblyNameReference? FindAssembly(this ModuleDefinition module, string name)
     {
-        return $"{propertyDefinition.DeclaringType.FullName}.{propertyDefinition.Name}";
+        return module.AssemblyReferences.Where(x => x.Name == name).MaxBy(x => x.Version);
     }
 
-    public static bool IsCallToBaseMethod(this Instruction instruction, MethodDefinition method)
+    public static TypeReference FindType(this ModuleDefinition currentModule, string @namespace, string typeName,
+        IMetadataScope? scope = null, params string[] typeParameters)
     {
-        return instruction.OpCode == OpCodes.Call && instruction.IsCallToMethod(method);
+        var result = new TypeReference(@namespace, typeName, currentModule, scope);
+        foreach (var typeParameter in typeParameters)
+        {
+            result.GenericParameters.Add(new GenericParameter(typeParameter, result));
+        }
+
+        return currentModule.ImportReference(result);
     }
-
-    public static bool IsCallToMethod(this Instruction instruction, MethodDefinition method)
-    {
-        if (!instruction.OpCode.IsCall()) return false;
-
-        if (!(instruction.Operand is MethodReference methodReference)) return false;
-
-        if (methodReference.Name != method.Name) return false;
-
-        if (methodReference.Resolve() != method) return false;
-
-        return true;
-    }
-
-    public static bool IsCallToMethod(this Instruction instruction, string methodName, out int propertyNameIndex)
-    {
-        propertyNameIndex = 1;
-        if (!instruction.OpCode.IsCall()) return false;
-
-        if (!(instruction.Operand is MethodReference methodReference)) return false;
-
-        if (methodReference.Name != methodName) return false;
-
-        var parameterDefinition = methodReference.Parameters.FirstOrDefault(x => x.Name == "propertyName");
-        if (parameterDefinition != null)
-            propertyNameIndex = methodReference.Parameters.Count - parameterDefinition.Index;
-
-        return true;
-    }
-
-    public static bool IsCall(this OpCode opCode)
-    {
-        return opCode.Code == Code.Call ||
-               opCode.Code == Code.Callvirt;
-    }
-
+    
     public static TypeReference GetGeneric(this TypeReference reference)
     {
         if (!reference.HasGenericParameters) return reference;
@@ -106,86 +78,5 @@ public static class CecilExtensions
         return reference;
     }
 
-    public static IEnumerable<CustomAttribute> GetAllCustomAttributes(this TypeDefinition typeDefinition)
-    {
-        foreach (var attribute in typeDefinition.CustomAttributes) yield return attribute;
-
-        if (!(typeDefinition.BaseType is TypeDefinition baseDefinition)) yield break;
-
-        foreach (var attribute in baseDefinition.GetAllCustomAttributes()) yield return attribute;
-    }
-
-    public static IEnumerable<CustomAttribute> GetAttributes(this IEnumerable<CustomAttribute> attributes,
-        string attributeName)
-    {
-        return attributes.Where(attribute => attribute.Constructor.DeclaringType.FullName == attributeName);
-    }
-
-    public static CustomAttribute? GetAttribute(this IEnumerable<CustomAttribute> attributes, string attributeName)
-    {
-        return attributes.FirstOrDefault(attribute => attribute.Constructor.DeclaringType.FullName == attributeName);
-    }
-
-    public static bool ContainsAttribute(this IEnumerable<CustomAttribute> attributes, string attributeName)
-    {
-        return attributes.Any(attribute => attribute.Constructor.DeclaringType.FullName == attributeName);
-    }
-
-    public static IEnumerable<TypeReference> GetAllInterfaces(this TypeDefinition? type)
-    {
-        while (type != null)
-        {
-            if (type.HasInterfaces)
-                foreach (var face in type.Interfaces)
-                    yield return face.InterfaceType;
-
-            type = type.BaseType?.Resolve();
-        }
-    }
-
-    public static bool GetBaseMethod(this MethodDefinition method, out MethodDefinition baseMethod)
-    {
-        baseMethod = method.GetBaseMethod();
-        return baseMethod != null
-               && baseMethod != method; // cecil's GetBaseMethod() returns self if the method has no base method...
-    }
-
-    public static IEnumerable<MethodDefinition> GetSelfAndBaseMethods(this MethodDefinition method)
-    {
-        yield return method;
-
-        while (method.GetBaseMethod(out method)) yield return method;
-    }
-
-    public static OpCode GetCallOpCode(this TypeReference type)
-    {
-        return type.IsValueType ? OpCodes.Call : OpCodes.Callvirt;
-    }
-
-    public static void AddConditionalBoxInstructions(this ICollection<Instruction> instructions, TypeReference type)
-    {
-        if (type.IsValueType)
-        {
-            var genericType = type.GetGeneric();
-            instructions.Add(Instruction.Create(OpCodes.Ldobj, genericType));
-            instructions.Add(Instruction.Create(OpCodes.Box, genericType));
-        }
-    }
     
-    public static AssemblyNameReference? FindAssembly(this ModuleDefinition module, string name)
-    {
-        return module.AssemblyReferences.Where(x => x.Name == name).MaxBy(x => x.Version);
-    }
-
-    public static TypeReference FindType(this ModuleDefinition currentModule, string @namespace, string typeName,
-        IMetadataScope? scope = null, params string[] typeParameters)
-    {
-        var result = new TypeReference(@namespace, typeName, currentModule, scope);
-        foreach (var typeParameter in typeParameters)
-        {
-            result.GenericParameters.Add(new GenericParameter(typeParameter, result));
-        }
-
-        return currentModule.ImportReference(result);
-    }
 }

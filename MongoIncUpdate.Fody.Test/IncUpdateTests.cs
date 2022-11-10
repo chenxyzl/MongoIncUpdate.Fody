@@ -9,28 +9,28 @@ using Xunit.Abstractions;
 namespace MongoIncUpdate.Fody.Test;
 
 [MongoIncUpdate]
-public class ItemInt
+public sealed class ItemInt
 {
     [BsonId] public int Id { get; set; }
     public int I { get; set; }
 }
 
 [MongoIncUpdate]
-public class ItemNestInt
+public sealed class ItemNestInt
 {
     [BsonId] public int Id { get; set; }
     public ItemInt ItemInt { get; set; }
 }
 
 [MongoIncUpdate]
-public class ItemNestNestInt
+public sealed class ItemNestNestInt
 {
     [BsonId] public int Id { get; set; }
     public ItemNestInt ItemNestInt { get; set; }
 }
 
 [MongoIncUpdate]
-public class ItemIntKeyStateMapInt
+public sealed class ItemIntKeyStateMapInt
 {
     [BsonId] public int Id { get; set; }
 
@@ -39,7 +39,7 @@ public class ItemIntKeyStateMapInt
 }
 
 [MongoIncUpdate]
-public class ItemStringKeyStateMapString
+public sealed class ItemStringKeyStateMapString
 {
     [BsonId] public int Id { get; set; }
 
@@ -48,7 +48,7 @@ public class ItemStringKeyStateMapString
 }
 
 [MongoIncUpdate]
-public class NestStateMapItem
+public sealed  class NestStateMapItem
 {
     [BsonId] public int Id { get; set; }
 
@@ -57,20 +57,20 @@ public class NestStateMapItem
 }
 
 [MongoIncUpdate]
-public class NestStateMapStateMapItem
+public sealed class NestStateMapStateMapItem
 {
     [BsonId] public int Id { get; set; }
     public StateMap<int, StateMap<int, ItemInt>> StateMapStateMapItem { get; set; } = new();
 }
 
 [MongoIncUpdate]
-public class ItemNestItemStateMap
+public sealed  class ItemNestItemStateMap
 {
     public ItemIntKeyStateMapInt NestItem { get; set; }
 }
 
 [MongoIncUpdate]
-public class ItemStateMapItemStateMapItem
+public sealed class ItemStateMapItemStateMapItem
 {
     [BsonId] public int Id { get; set; }
     public StateMap<int, ItemNestItemStateMap> Item { get; set; } = new();

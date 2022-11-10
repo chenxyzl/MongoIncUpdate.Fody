@@ -5,9 +5,9 @@ namespace MongoIncUpdate.Fody;
 
 public partial class ModuleWeaver
 {
-    public void InjectPropSetterPropChangeNotify(TypeDefinition type)
+    private void InjectPropSetterPropChangeNotify(TypeDefinition type)
     {
-        var propChangeMethod = _typeSelector.SelectMethodFromType(ModuleDefinition, MongoIncUpdateInterface, "PropChange");
+        var propChangeMethod = _typeSelector.SelectMethodFromType(ModuleDefinition, _mongoIncUpdateInterface, "PropChange");
         foreach (var prop in type.Properties)
         {
             var setter = prop.SetMethod;

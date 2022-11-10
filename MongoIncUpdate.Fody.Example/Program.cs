@@ -4,9 +4,9 @@ namespace MongoIncUpdate.Fody.Example;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        Benchmark(args);
+        // Benchmark(args);
         // Test(args);
     }
 

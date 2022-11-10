@@ -8,7 +8,7 @@ public partial class ModuleWeaver
     public void InjectOverrideProperty(TypeDefinition typ, string propName, bool isStatic = false)
     {
         //找到基类Prop
-        var baseProp = _typeSelector.SelectPropFromType(MongoIncUpdateInterface, $"{propName}");
+        var baseProp = _typeSelector.SelectPropFromType(_mongoIncUpdateInterface, $"{propName}");
         //创建field//字段
         var fieldDef = new FieldDefinition($"_{propName.FirstCharToLowerCase()}",
             isStatic ? FieldAttributes.Static | FieldAttributes.Private : FieldAttributes.Private, //
@@ -17,7 +17,7 @@ public partial class ModuleWeaver
 
         //插入getter
         var baseGetPropMethodDef =
-            _typeSelector.SelectMethodFromType(ModuleDefinition, MongoIncUpdateInterface, $"get_{propName}");
+            _typeSelector.SelectMethodFromType(ModuleDefinition, _mongoIncUpdateInterface, $"get_{propName}");
         var getPropMethodDef = new MethodDefinition(
             $"{baseGetPropMethodDef.DeclaringType.FullName}.{baseGetPropMethodDef.Name}",
             MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.NewSlot |
@@ -42,7 +42,7 @@ public partial class ModuleWeaver
 
         //插入setter
         var baseSetPropMethodDef =
-            _typeSelector.SelectMethodFromType(ModuleDefinition, MongoIncUpdateInterface, $"set_{propName}");
+            _typeSelector.SelectMethodFromType(ModuleDefinition, _mongoIncUpdateInterface, $"set_{propName}");
         var setPropMethodDef = new MethodDefinition(
             $"{baseSetPropMethodDef.DeclaringType.FullName}.{baseSetPropMethodDef.Name}",
             MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.NewSlot |
@@ -71,7 +71,7 @@ public partial class ModuleWeaver
         typ.Methods.Add(setPropMethodDef);
 
         //Prop重载
-        var prop = new PropertyDefinition($"{MongoIncUpdateInterface}.{baseProp.Name}",
+        var prop = new PropertyDefinition($"{_mongoIncUpdateInterface}.{baseProp.Name}",
             baseProp.Attributes,
             typ);
         typ.Properties.Add(prop);

@@ -10,16 +10,27 @@ public class TypeSelector
     {
         foreach (var typ in types)
         {
-            if (!IsContainer(typ))
-                throw new WeavingException($"{typ.Name} member must only property. [means:method only getter/setter");
+            // if (!IsContainer(typ))
+            //     throw new WeavingException($"{typ.Name} member must only property. [means:method only getter/setter");
             if (HasPublicFiled(typ))
             {
                 var v = typ.Fields.Where(v => v.IsPublic).Select(v => v.Name).ToList();
                 throw new WeavingException(
                     $"{typ.Name} member must only property. [means: no public filed:{v[0]}]");
             }
-            if (!CanVirtualize(typ))
-                throw new WeavingException($"{typ.Name} must only public seal class. [means: public seal class]");
+
+            if (!typ.IsClass)
+            {
+                throw new WeavingException($"{typ.Name} type must: class");
+            }
+            if (!typ.IsPublic)
+            {
+                throw new WeavingException($"{typ.Name} type must: public");
+            }
+            if (!typ.IsSealed)
+            {
+                throw new WeavingException($"{typ.Name} type must: sealed");
+            }
         }
     }
 
@@ -82,32 +93,9 @@ public class TypeSelector
         return propToProcess[0];
     }
 
-    private static bool CanVirtualize(TypeDefinition type)
-    {
-        return IsPublicClass(type)
-               && IsExtensible(type);
-    }
-
     private static bool HasMongoIncUpdateAttribute(TypeDefinition type)
     {
         return type.CustomAttributes.Any(_ => _.AttributeType.Name == "MongoIncUpdateAttribute");
-    }
-
-    private static bool HasMongoIncUpdateInterfaceAttribute(TypeDefinition type)
-    {
-        return type.CustomAttributes.Any(_ => _.AttributeType.Name == "MongoIncUpdateInterfaceAttribute");
-    }
-
-    private static bool IsPublicClass(TypeDefinition type)
-    {
-        return type.IsPublic
-               && type.IsClass
-               && !type.IsNested;
-    }
-
-    private static bool IsExtensible(TypeDefinition type)
-    {
-        return !type.IsSealed;
     }
 
     public static bool IsContainer(TypeDefinition type)
@@ -118,10 +106,5 @@ public class TypeSelector
     public static bool HasPublicFiled(TypeDefinition type)
     {
         return type.Fields.Any(t => t.IsPublic);
-    }
-
-    private static bool ImplementsInterfaces(TypeDefinition type)
-    {
-        return type.HasInterfaces;
     }
 }

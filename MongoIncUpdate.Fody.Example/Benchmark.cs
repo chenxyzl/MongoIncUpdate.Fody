@@ -26,7 +26,6 @@ public class NestOldItem
     public Dictionary<int, OldItem> OItems { get; set; } //1
 }
 
-[MongoIncUpdate]
 public class DirtyItem
 {
     public int Int { get; set; } //0
@@ -35,7 +34,6 @@ public class DirtyItem
     public string? Str { get; set; } //3
 }
 
-[MongoIncUpdate]
 public class DirtyNestItem
 {
     [BsonId] public int Id { get; set; }
@@ -48,7 +46,7 @@ public class DirtyNestItem
 
 [MemoryDiagnoser]
 [RankColumn]
-public class IncUpdateBenchmark
+public partial class IncUpdateBenchmark
 {
     private const int _stateMapCount = 1000;
     private static DirtyNestItem _benchmarkIncUpdateData;
