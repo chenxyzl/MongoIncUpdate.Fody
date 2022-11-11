@@ -90,7 +90,7 @@ public partial class WeaverTests
         {
             if (_init) return;
             _init = true;
-            BsonSerializer.RegisterGenericSerializerDefinition(typeof(StateMap<,>), typeof(StateMapSerializer<,>));
+            IncUpdateExt.Register();
 
             _output.WriteLine("---init test begin---");
             //创建mongo链接

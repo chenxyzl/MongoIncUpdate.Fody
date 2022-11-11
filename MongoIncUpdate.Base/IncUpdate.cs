@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 
@@ -8,8 +9,20 @@ public static class IncUpdateExt
 {
     static readonly ReplaceOptions ReplaceOptions = new() { IsUpsert = true };
     static readonly UpdateOptions UpdateOptions = new() { IsUpsert = true };
+    private static bool _init;
+    private static readonly object InitLock = new();
 
-    public static object? GetBsonId<T>(this T self) where T : class
+    public static void Register()
+    {
+        lock (InitLock)
+        {
+            if (_init) return;
+            _init = true;
+            BsonSerializer.RegisterGenericSerializerDefinition(typeof(StateMap<,>), typeof(StateMapSerializer<,>));
+        }
+    }
+
+    private static object? GetBsonId<T>(this T self) where T : class
     {
         var find = typeof(BsonIdAttribute);
         var props = self.GetType().GetProperties();
