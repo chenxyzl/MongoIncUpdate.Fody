@@ -66,7 +66,6 @@ public partial class IncUpdateBenchmark
         {
             if (_init) return;
             _init = true;
-            IncUpdateExt.Register();
             //创建mongo链接
             var connectionString = "mongodb://admin:123456@127.0.0.1:27017/test?authSource=admin";
             var mongoClient = new MongoClient(connectionString);

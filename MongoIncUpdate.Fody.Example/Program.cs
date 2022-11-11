@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Running;
+using MongoIncUpdate.Base;
 
 namespace MongoIncUpdate.Fody.Example;
 
@@ -6,6 +7,7 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
+        IncUpdateExt.Register();
         // Benchmark(args);
         // Test(args);
     }
