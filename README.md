@@ -33,7 +33,6 @@
         2. 接着实现IBsonDocumentSerializer接口,在TryGetMemberSerializationInfo函数中返回value的序列化器。key的序列化器是StateMapSerializer<TKey, TValue>,不会打断递归,且key会被检查继承关系,检查失败会退化为原生类型,能保证key正常序列化。对于value:此操作类似把value当作了key的成员类型。
 5. 调用await collection.UpdateOneAsync(filter, setter, new UpdateOptions { IsUpsert = true });来保存
 
-## 伪代码实现
 ## 实现过程的伪代码
 ``` c#
 public sealed NeedInject //: IDiffUpdateable  //0.注入接口IDiffUpdateable
