@@ -33,6 +33,35 @@
         2. 接着实现IBsonDocumentSerializer接口,在TryGetMemberSerializationInfo函数中返回value的序列化器。key的序列化器是StateMapSerializer<TKey, TValue>,不会打断递归,且key会被检查继承关系,检查失败会退化为原生类型,能保证key正常序列化。对于value:此操作类似把value当作了key的成员类型。
 5. 调用await collection.UpdateOneAsync(filter, setter, new UpdateOptions { IsUpsert = true });来保存
 
+## 伪代码实现
+## 实现过程的伪代码
+``` c#
+public sealed NeedInject //: IDiffUpdateable  //0.注入接口IDiffUpdateable
+{
+    //1.构造函数注入调用IDiffUpdateable.Init()
+    // NeedInject(){
+    //     //构造函数注入调用IDiffUpdateable.Init()
+    // }
+    //2.注入属性Dirties
+    //覆盖属性 IDiffUpdateable.Dirties
+    //private static readonly BitArray _dirties = new(0);
+    //BitArray IDiffUpdateable.Dirties { get; set; } = _dirties;
+    //3.注入静态成员IsOnceInitDone
+    //覆盖 IDiffUpdateable.IsOnceInitDone
+    // private static readonly bool _isOnceInitDone = false; //跳过初始化逻辑
+    // bool IDiffUpdateable.IsOnceInitDone { get; set; } = _isOnceInitDone;
+    //4.注入静态成员NameMapping
+    //覆盖 IDiffUpdateable.NameMapping
+    // private static readonly Dictionary<string, int> _nameMapping = new();
+    // Dictionary<string, int> IDiffUpdateable.NameMapping { get; set; } = _nameMapping;
+    //5.注入静态成员NameMapping
+    //覆盖 IDiffUpdateable.IdxMapping
+    // private static readonly Dictionary<int, IPropertyCallAdapter> _idxMapping = new();
+    // Dictionary<int, IPropertyCallAdapter> IDiffUpdateable.IdxMapping { get; set; } = _idxMapping;
+    public int PropA { get; set;} //注入setter调用IDiffUpdateable.PropChange
+}
+```
+
 ## 如何使用
 ### 1.<font color=red>注册序列化器</font>(因为嵌套类型需要)
 最好在链接mongo数据库之前   
