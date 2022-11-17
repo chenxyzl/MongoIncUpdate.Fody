@@ -7,9 +7,11 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        IncUpdateExt.Register();
+        Console.WriteLine("---Main---");
+        // IncUpdateExt.Register();
         // Benchmark(args);
         // Test(args);
+        Console.WriteLine("---Main完成---");
     }
 
     //需要性能测试就在Main里面打开

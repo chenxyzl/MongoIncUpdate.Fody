@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoIncUpdate.Fody.Test", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoIncUpdate.Fody.Example", "MongoIncUpdate.Fody.Example\MongoIncUpdate.Fody.Example.csproj", "{FBBC9B84-074D-4CD2-9D63-39F41E0624DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoIncUpdate.Benchmark", "MongoIncUpdate.Benchmark\MongoIncUpdate.Benchmark.csproj", "{9263267F-BED3-4551-BC3C-6541E7B096D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoIncUpdate.MetricsServer", "MongoIncUpdate.MetricsServer\MongoIncUpdate.MetricsServer.csproj", "{027543F4-507E-428E-9FE0-80CBF93E4157}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{FBBC9B84-074D-4CD2-9D63-39F41E0624DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBBC9B84-074D-4CD2-9D63-39F41E0624DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBBC9B84-074D-4CD2-9D63-39F41E0624DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9263267F-BED3-4551-BC3C-6541E7B096D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9263267F-BED3-4551-BC3C-6541E7B096D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9263267F-BED3-4551-BC3C-6541E7B096D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9263267F-BED3-4551-BC3C-6541E7B096D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{027543F4-507E-428E-9FE0-80CBF93E4157}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{027543F4-507E-428E-9FE0-80CBF93E4157}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{027543F4-507E-428E-9FE0-80CBF93E4157}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{027543F4-507E-428E-9FE0-80CBF93E4157}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

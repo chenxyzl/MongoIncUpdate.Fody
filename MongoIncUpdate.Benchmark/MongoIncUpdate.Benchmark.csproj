@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\MongoIncUpdate.Base\MongoIncUpdate.Base.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <WeaverFiles Include="$(SolutionDir)MongoIncUpdate.Fody\bin\$(Configuration)\net6.0\MongoIncUpdate.Fody.dll" />
+        <WeaverFiles Include="$(SolutionDir)MongoIncUpdate.Fody\bin\$(Configuration)\net6.0\MongoIncUpdate.Fody.pdb" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+        <PackageReference Include="mongocsharpdriver" Version="2.18.0" />
+        <PackageReference Include="MongoDB.Bson" Version="2.18.0" />
+        <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
+        <PackageReference Include="CommandLineParser" Version="2.9.1" />
+        <PackageReference Include="Fody" Version="6.6.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="prometheus-net" Version="7.1.0-pre-000318-0479f53" />
+    </ItemGroup>
+
+</Project>
