@@ -21,7 +21,6 @@
         <PackageReference Include="mongocsharpdriver" Version="2.18.0" />
         <PackageReference Include="MongoDB.Bson" Version="2.18.0" />
         <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
-        <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
         <PackageReference Include="CommandLineParser" Version="2.9.1" />
         <PackageReference Include="Fody" Version="6.6.4">
             <PrivateAssets>all</PrivateAssets>

@@ -1,5 +1,5 @@
-﻿using BenchmarkDotNet.Attributes;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
+using MongoIncUpdate.Benchmark;
 
 namespace MongoBenchmark;
 
@@ -34,7 +34,6 @@ public class MongoBenchmark
         //2.更具TestRead确定是否调用读取ReadResult--benchmark.dotnet调用
         //prometheus记录BenchmarkInsert读取次数+1
         Env.GetMetric("BenchmarkInsert").Inc(1);
-        Console.WriteLine("XXX");
     }
 
     // [Benchmark]

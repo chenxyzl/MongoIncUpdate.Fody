@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using System.Net;
+using CommandLine;
 using Prometheus;
 
 namespace MongoBenchmark;
@@ -15,17 +16,11 @@ public static class Env
         public bool Model { get; set; } = false;
     }
 
-    private static bool _init;
-    private static readonly object LockObj = new();
-
     public static void Init(string[] args)
     {
-        lock (LockObj)
-        {
-            if (_init) return;
-            _init = true;
-            InitSomeThings(args);
-        }
+        InitParams(args);
+        InitMetric();
+        InitMongo();
     }
 
     static void InitParams(string[] args)
@@ -43,56 +38,63 @@ public static class Env
         });
     }
 
-    private static MetricPusher? _pusher;
-    private static string _jobNameAdjust = "";
     private static readonly Dictionary<string, ICounter> MetricsDic = new();
-    private static MetricFactory? _factory;
+    private static MetricServer? _server;
+
     static void InitMetric()
     {
-        _jobNameAdjust = "MongoBenchmark";
-        var registry = Metrics.NewCustomRegistry();
-        _factory = Metrics.WithCustomRegistry(registry);
+        var port = 9101;
+        // Start the metrics server on your preferred port number.
+        _server = new MetricServer(port: port);
 
-        _pusher = new MetricPusher(new MetricPusherOptions
+        try
         {
-            Endpoint = "http://localhost:1235/metrics",
-            Job = $"MongoBenchmarkJob",
-            OnError = e => { Console.Error.WriteLine($"ABC-ABC: {e}"); },
-            // Instance = "MongoBenchmarkInstance",
-            Registry = registry,
-            IntervalMilliseconds = 30,
-        });
-        _pusher.Start();
-    }
-
-    static void RegisterMetrics()
-    {
-        Console.WriteLine($"metric registered begin");
-        
-        var counter = _factory.CreateCounter($"BenchmarkInsert", String.Empty);
-        
-        MetricsDic.Add("BenchmarkInsert", counter);
-
-        foreach (var v in MetricsDic)
+            // On .NET Framework, starting the server requires either elevation to Administrator or permission configuration.
+            _server.Start();
+        }
+        catch (HttpListenerException ex)
         {
-            Console.WriteLine($"{v.Key} registered success");
+            Console.WriteLine($"Failed to start metric server: {ex.Message}");
+            Console.WriteLine(
+                "You may need to grant permissions to your user account if not running as Administrator:");
+            Console.WriteLine($"netsh http add urlacl url=http://+:{port}/metrics user=DOMAIN\\user");
+            return;
         }
 
-        Console.WriteLine($"metric registered end");
+        // Generate some sample data from fake business logic.
+        // var recordsProcessed =
+        //     Metrics.CreateCounter("sample_records_processed_total", "Total number of records processed.");
+        //
+        // _ = Task.Run(async delegate
+        // {
+        //     while (true)
+        //     {
+        //         // Pretend to process a record approximately every second, just for changing sample data.
+        //         recordsProcessed.Inc();
+        //
+        //         await Task.Delay(TimeSpan.FromSeconds(1));
+        //     }
+        // });
+
+        // Metrics published in this sample:
+        // * built-in process metrics giving basic information about the .NET runtime (enabled by default)
+        // * the sample counter defined above
+        Console.WriteLine($"Open http://localhost:{port}/metrics in a web browser.");
+        Console.WriteLine("Press enter to exit.");
     }
 
-    public static ICounter GetMetric(string name)
-    {
-        Console.WriteLine($"{MetricsDic.Count} registered aaa");
-        MetricsDic.TryGetValue(name, out var gauge);
-        if (gauge == null)
-        {
-            foreach (var v in MetricsDic)
-            {
-                Console.WriteLine($"{v.Key} registered bbb");
-            }
 
-            throw new Exception($"name:{name} not found");
+    public static ICounter GetMetric(string fullName)
+    {
+        if (_server == null)
+        {
+            throw new Exception("_server 没有初始化");
+        }
+
+        if (!MetricsDic.TryGetValue(fullName, out var gauge))
+        {
+            gauge = Metrics.CreateCounter(fullName, fullName);
+            MetricsDic.Add(fullName, gauge);
         }
 
         return gauge;
@@ -103,21 +105,8 @@ public static class Env
     {
     }
 
-    static void InitSomeThings(string[] args)
-    {
-        InitParams(args);
-        InitMetric();
-        InitMongo();
-        RegisterMetrics();
-        //准备db
-        //1.链接好db
-        //2.创建好集合
-        //3.清理老数据
-        //4.准备好数据
-    }
-
     public static void Stop()
     {
-        _pusher?.Stop();
+        _server?.Stop();
     }
 }
