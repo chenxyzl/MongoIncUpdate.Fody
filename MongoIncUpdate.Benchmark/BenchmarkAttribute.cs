@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace MongoIncUpdate.Benchmark;
 
@@ -62,5 +63,15 @@ public class GlobalSetupAttribute : Attribute
 
 [AttributeUsage(AttributeTargets.Method)]
 public class GlobalCleanupAttribute : Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public class CaseSetupAttribute : Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public class CaseCleanupAttribute : Attribute
 {
 }

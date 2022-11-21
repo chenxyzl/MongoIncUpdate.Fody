@@ -1,4 +1,6 @@
-﻿using MongoDB.Driver;
+﻿using System;
+using System.Threading.Tasks;
+using MongoDB.Driver;
 using MongoIncUpdate.Benchmark;
 
 namespace MongoBenchmark;
@@ -8,8 +10,8 @@ public class MongoBenchmark
     // [Params(10 * 1024, 100 * 1024, 512 * 1024, 1024 * 1024)]
     // public int DataSize { get; set; }
     //
-    // [Params(10, 100, 1000, 5000)] 
-    // public int CoCount { get; set; }
+    [Params(10, 100, 1000, 5000)] 
+    public int CoCount { get; set; }
     //读写测试
     [Params(false, true)] public bool TestRead { get; set; } = false;
     
